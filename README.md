@@ -2,7 +2,7 @@
 
 A single-page portfolio for **AJ Curry**, Emmy Award-winning sports & entertainment marketing executive.
 
-**Live site:** https://restainocreative.github.io/aj-curry-portfolio/
+**Live site:** https://justinrestaino.com/aj-curry-portfolio/
 
 ## Stack
 
