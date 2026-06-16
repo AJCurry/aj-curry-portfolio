@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AJ Curry — Emmy Award-Winning Marketing Executive</title>
+<meta name="description" content="AJ Curry — Emmy Award-winning marketing executive with 12 years building social, content, experiential, and influencer strategies for the most iconic brands in sports and entertainment.">
+<meta name="author" content="AJ Curry">
+<meta name="theme-color" content="#081F34">
+<link rel="canonical" href="https://restainocreative.github.io/aj-curry-portfolio/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+<!-- Open Graph / social share -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AJ Curry">
+<meta property="og:title" content="AJ Curry — Emmy Award-Winning Marketing Executive">
+<meta property="og:description" content="12 years building social, content, experiential, and influencer strategies for the most iconic brands in sports and entertainment.">
+<meta property="og:url" content="https://restainocreative.github.io/aj-curry-portfolio/">
+<meta property="og:image" content="https://restainocreative.github.io/aj-curry-portfolio/images/hero.jpg">
+
+<!-- Twitter card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AJ Curry — Emmy Award-Winning Marketing Executive">
+<meta name="twitter:description" content="12 years building social, content, experiential, and influencer strategies for the most iconic brands in sports and entertainment.">
+<meta name="twitter:image" content="https://restainocreative.github.io/aj-curry-portfolio/images/hero.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Archivo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+  /* ============================================================
+     AJ Curry — Portfolio
+     Editorial bold/cultural direction:
+       Instrument Serif display + Archivo body
+       crisp white canvas, navy interlude bands
+       electric-blue + lime accents, soft-light film grain
+     ============================================================ */
+
+  :root{
+    /* Ink + greys */
+    --ink:#15171C;
+    --ink-2:#3A3D45;
+    --muted:#5A5E66;
+    --muted-2:#71757E;
+    --muted-3:#9A9DA6;
+    --faint:#A7ABB4;
+
+    /* Hairlines */
+    --line:rgba(20,23,28,0.12);
+    --line-soft:rgba(20,23,28,0.10);
+    --line-strong:rgba(20,23,28,0.16);
+
+    /* Accents (tweakable) */
+    --ac:#2747F5;   /* electric blue  — numbers, links, active nav */
+    --ac2:#CFFF81;  /* lime           — pops on dark, hero pulse   */
+    --ac3:#081F34;  /* navy           — dark interlude surfaces    */
+
+    /* Rhythm */
+    --pad:clamp(20px,5vw,72px);
+    --maxw:1480px;
+    --nav-h:84px;
+
+    --serif:'Instrument Serif',Georgia,serif;
+    --sans:'Archivo','Helvetica Neue',Arial,sans-serif;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  /* Lenis smooth scroll (disables native smooth while Lenis drives the page) */
+  html.lenis,html.lenis body{height:auto;}
+  .lenis.lenis-smooth{scroll-behavior:auto!important;}
+  .lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain;}
+  .lenis.lenis-stopped{overflow:hidden;}
+  body{
+    margin:0;
+    /* Barely-off-white base + a very fine fixed noise so flat areas read as
+       paper rather than dead-flat #fff. */
+    background-color:#FCFCFB;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='nz'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23nz)'/%3E%3C/svg%3E");
+    background-size:220px 220px;
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+    position:relative;
+  }
+  a{color:inherit;}
+  ::selection{background:var(--ac);color:#fff;}
+  img{max-width:100%;display:block;}
+  h1,h2,h3,p,figure,blockquote{margin:0;}
+  button{font-family:inherit;}
+
+  /* ---- Film grain overlay ---------------------------------- */
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:60;
+    opacity:.45;mix-blend-mode:soft-light;background-size:220px 220px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---- Reveal-on-scroll (progressive enhancement) ----------
+     Content is visible by default. It is only hidden for the entrance
+     animation once JS adds `js-anim` to <html> AND the observer is driving
+     it. If scripts are blocked or the observer never fires, text can never
+     get stuck invisible. */
+  html.js-anim .reveal{
+    opacity:0;transform:translateY(32px) scale(0.992);
+    transition:opacity .85s var(--ease),transform .9s var(--ease);
+  }
+  /* Match the hide selector's specificity so `.in` always wins once shown. */
+  html.js-anim .reveal.in{opacity:1;transform:none;}
+
+  /* Card takeover — section content rises + settles like a card sliding in. */
+  html.js-anim .reveal.card{
+    transform:translateY(70px) scale(0.965);
+    transition:opacity 1s var(--ease),transform 1.05s var(--ease);
+  }
+  html.js-anim .reveal.card.in{transform:none;}
+
+  /* Character-by-character title reveal — each letter eases up in sequence. */
+  html.js-anim .section-title .ch{
+    display:inline-block;opacity:0;transform:translateY(0.5em) rotate(2.5deg);
+    transition:opacity .5s var(--ease),transform .58s var(--ease);
+    transition-delay:calc(var(--i) * 26ms);
+  }
+  html.js-anim .section-head.in .section-title .ch{opacity:1;transform:none;}
+
+  .section{
+    padding:clamp(60px,9vh,118px) var(--pad);
+    max-width:var(--maxw);margin:0 auto;scroll-margin-top:var(--nav-h);
+  }
+  .section-head{
+    display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;
+    margin-bottom:clamp(40px,6vh,72px);
+  }
+  .section-num{
+    font-size:13px;font-weight:700;letter-spacing:.18em;color:var(--ac);
+  }
+  .section-title{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(44px,7vw,104px);line-height:.92;letter-spacing:-0.02em;
+  }
+
+  /* ============================================================
+     NAV
+     ============================================================ */
+  .nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;align-items:center;justify-content:space-between;gap:24px;
+    padding:18px var(--pad);
+    background:rgba(255,255,255,0.82);
+    backdrop-filter:saturate(180%) blur(14px);
+    -webkit-backdrop-filter:saturate(180%) blur(14px);
+    border-bottom:1px solid var(--line-soft);
+    transition:box-shadow .3s ease;
+  }
+  .nav.scrolled{box-shadow:0 1px 24px rgba(20,23,28,0.10);}
+  .nav-logo{
+    font-family:var(--serif);font-size:24px;letter-spacing:.01em;
+    line-height:1;white-space:nowrap;text-decoration:none;color:var(--ink);
+  }
+  .nav-right{display:flex;align-items:center;gap:clamp(14px,2vw,30px);}
+  .navlink{
+    display:none;font-size:12px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted-2);text-decoration:none;
+    transition:color .2s;
+  }
+  .nav.show-links .navlink{display:inline-block;}
+  .navlink:hover{color:var(--ink);}
+  .navlink.active{color:var(--ac);}
+  .nav-cta{
+    font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:#fff;background:var(--ink);text-decoration:none;
+    padding:11px 18px;border-radius:999px;
+    transition:background .25s,transform .2s;white-space:nowrap;
+  }
+  .nav-cta:hover{background:var(--ac);transform:translateY(-1px);}
+
+  /* ============================================================
+     HERO
+     ============================================================ */
+  .hero{
+    position:relative;min-height:100svh;overflow:hidden;
+    display:flex;align-items:center;
+    padding:120px var(--pad) clamp(80px,12vh,130px);
+  }
+  /* The photo fills the frame (cover) so resizing just re-crops smoothly —
+     no floating image or exposed edge. object-position keeps AJ framed on the
+     left with her face safe; the empty studio backdrop is what gets trimmed. */
+  .hero-photo{position:absolute;inset:0;z-index:0;}
+  .hero-photo img{
+    width:100%;height:100%;object-fit:cover;object-position:48% 18%;display:block;
+  }
+  /* Fade the photo into the white page on the right (where the text lives) and
+     softly along the bottom — AJ on the left stays fully visible. */
+  .hero-veil{
+    position:absolute;inset:0;pointer-events:none;
+    background:
+      linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 31%, rgba(255,255,255,0.5) 48%, rgba(255,255,255,0.88) 67%, #fff 88%),
+      linear-gradient(180deg, rgba(255,255,255,0) 62%, rgba(255,255,255,0.82) 100%);
+  }
+  /* Text block sits in the right negative space, clear of AJ. On wide screens
+     it's pulled left toward her (the gap grows with width otherwise); the pull
+     eases to 0 on narrow windows so it never crowds her. */
+  .hero-content{
+    position:relative;z-index:2;margin-left:auto;
+    margin-right:clamp(0px, 47vw - 600px, 540px);
+    width:min(600px,53vw);
+  }
+  .eyebrow{
+    display:flex;align-items:center;gap:14px;margin-bottom:clamp(18px,3vh,32px);
+  }
+  .eyebrow-dot{
+    width:9px;height:9px;border-radius:50%;background:var(--ac2);
+    animation:blink 2.4s ease-in-out infinite;flex:0 0 auto;
+  }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.15;}}
+  .eyebrow-text{
+    font-size:12px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted-2);
+  }
+  .hero-title{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(60px,9.4vw,150px);line-height:.86;letter-spacing:-0.02em;
+    /* Extend the paint box below the baseline so the clipped gradient covers
+       descenders (J, y); pull layout back up so nothing shifts. */
+    padding-bottom:0.28em;margin-bottom:-0.28em;
+    /* Text is painted by a clipped gradient so a band of green can wipe across
+       it on reveal; at rest it reads as solid ink. */
+    background-image:linear-gradient(100deg,
+      var(--ink) 0%, var(--ink) 42%, var(--ac2) 48%, var(--ac2) 52%, var(--ink) 58%, var(--ink) 100%);
+    background-size:300% 100%;background-position:0% 0;background-repeat:no-repeat;
+    -webkit-background-clip:text;background-clip:text;
+    -webkit-text-fill-color:transparent;color:transparent;
+  }
+  html.js-anim .hero-title.in{animation:heroGreenWipe 1.7s var(--ease) .25s both;}
+  @keyframes heroGreenWipe{
+    from{background-position:0% 0;}
+    to{background-position:100% 0;}
+  }
+  .hero-intro{
+    font-size:clamp(16px,1.45vw,20px);line-height:1.55;color:var(--ink-2);
+    font-weight:500;max-width:48ch;margin-top:clamp(20px,3vh,36px);text-wrap:pretty;
+  }
+  .hero-intro b{color:var(--ink);font-weight:700;}
+  .scroll-cue{
+    position:absolute;right:var(--pad);bottom:34px;z-index:2;
+    display:flex;align-items:center;gap:10px;
+    font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted-2);text-decoration:none;
+  }
+  .scroll-cue .line{
+    display:inline-block;width:40px;height:1px;background:var(--ink);
+    position:relative;top:-1px;
+  }
+  /* Decorative + functional social rail filling the right negative space. */
+  .hero-social{
+    position:absolute;z-index:2;right:calc(var(--pad) - 1px);top:50%;
+    transform:translateY(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:24px;
+  }
+  .hero-social::before{
+    content:"";position:absolute;left:50%;top:-32px;bottom:-32px;width:1px;
+    transform:translateX(-50%);z-index:-1;
+    background:linear-gradient(180deg,transparent,rgba(20,23,28,0.16) 16%,rgba(20,23,28,0.16) 84%,transparent);
+  }
+  .hero-social-label{
+    writing-mode:vertical-rl;transform:rotate(180deg);
+    font-size:10.5px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--muted-2);margin-bottom:2px;
+  }
+  .hero-social-link{
+    width:40px;height:40px;border-radius:50%;
+    background:rgba(255,255,255,0.72);border:1px solid rgba(20,23,28,0.16);
+    backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+    display:flex;align-items:center;justify-content:center;color:var(--ink);
+    transition:background .25s,color .25s,border-color .25s,transform .25s;
+  }
+  .hero-social-link:hover{
+    background:var(--ink);color:#fff;border-color:var(--ink);transform:translateY(-3px);
+  }
+  .hero-social-link svg{width:17px;height:17px;display:block;}
+  /* Hide the rail when the hero is too narrow to fit it beside the text. */
+  @media (max-width:1140px){ .hero-social{display:none;} }
+
+  /* ============================================================
+     HIGHLIGHTS — compact icon accordion
+     A row of icon squares; hovering / focusing one expands it to
+     reveal that highlight's full text. Falls back to a small card
+     grid (text always visible) on narrow / touch screens.
+     ============================================================ */
+  .hl-accordion{display:flex;gap:6px;}
+  .hl-tile{
+    flex:1 1 0;position:relative;overflow:hidden;min-width:0;
+    height:clamp(116px,11.5vw,140px);
+    border:1px solid var(--line);background:#fff;
+    transition:flex-grow .55s var(--ease),background .3s ease;
+  }
+  .hl-tile:hover,.hl-tile:focus-within{flex-grow:5.4;background:#FAFAFB;outline:none;}
+  /* Face = number + icon, centered when collapsed, slides left when expanded. */
+  .hl-tile-face{
+    position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;
+    transition:left .55s var(--ease);z-index:2;
+  }
+  .hl-tile:hover .hl-tile-face,.hl-tile:focus-within .hl-tile-face{left:clamp(34px,3.2vw,50px);}
+  .hl-tile-num{font-family:var(--serif);font-size:18px;line-height:1;color:var(--ac);}
+  .hl-tile-icon{color:var(--ink);display:block;}
+  .hl-tile-icon svg{width:26px;height:26px;display:block;}
+  .hl-tile-text{
+    position:absolute;top:0;bottom:0;left:clamp(66px,5.6vw,86px);
+    /* Fixed width (not right:0) so the copy is laid out once at its final
+       width and simply revealed by the tile clipping — no reflow flicker
+       while the tile animates open. */
+    width:clamp(200px,21vw,340px);
+    display:flex;align-items:center;
+    padding:clamp(14px,1.2vw,18px) clamp(18px,1.5vw,26px) clamp(14px,1.2vw,18px) 0;
+    opacity:0;transition:opacity .3s ease .16s;
+  }
+  .hl-tile:hover .hl-tile-text,.hl-tile:focus-within .hl-tile-text{opacity:1;}
+  .hl-tile-copy{
+    font-size:clamp(12.5px,0.92vw,13.8px);line-height:1.42;color:var(--muted);
+    margin:0;text-wrap:pretty;
+  }
+  .hl-tile-copy em{font-style:normal;font-weight:600;color:var(--ink);}
+
+  @media (max-width:1000px){
+    /* Hover-expand needs room + a pointer; below this show a compact card grid
+       with each highlight's text always visible. */
+    .hl-accordion{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(244px,1fr));
+      gap:1px;background:var(--line);border:1px solid var(--line);
+    }
+    .hl-tile{flex:none;height:auto;min-height:116px;border:0;overflow:visible;}
+    .hl-tile-face{
+      position:static;transform:none;left:auto;flex-direction:row;gap:13px;
+      align-items:center;justify-content:flex-start;
+      padding:clamp(18px,3vw,24px) clamp(18px,3vw,24px) 0;
+    }
+    .hl-tile-text{
+      position:static;opacity:1;left:auto;width:auto;
+      padding:11px clamp(18px,3vw,24px) clamp(18px,3vw,24px);
+    }
+  }
+
+  /* ============================================================
+     TESTIMONIAL QUOTES — full-bleed photo, premium editorial overlay:
+     a bottom-anchored quote, a cinematic scrim concentrated low + on the
+     text side (the photo stays vivid above), an inset hairline frame, and
+     refined citation type. Text side alternates (.alt).
+     ============================================================ */
+  .qspread{
+    position:relative;overflow:hidden;color:#fff;background:var(--ac3);
+    min-height:clamp(560px,90vh,940px);
+    display:flex;align-items:flex-end;
+    padding:clamp(56px,12vh,140px) var(--pad);
+  }
+  .qspread-photo{position:absolute;inset:0;z-index:0;}
+  .qspread-photo .px-layer{
+    position:absolute;left:0;right:0;top:-12%;height:124%;will-change:transform;
+  }
+  .qspread-photo img{
+    width:100%;height:100%;object-fit:cover;object-position:center 32%;display:block;
+  }
+  /* Cinematic scrim — concentrated at the bottom and the text side; the rest
+     of the photo keeps its full tone. */
+  .qspread-scrim{
+    position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:
+      linear-gradient(90deg, rgba(6,18,32,0.66) 0%, rgba(6,18,32,0.24) 40%, rgba(6,18,32,0) 64%),
+      linear-gradient(180deg, rgba(6,18,32,0.18) 0%, rgba(6,18,32,0) 28%, rgba(6,18,32,0.30) 56%, rgba(6,18,32,0.64) 78%, rgba(6,18,32,0.92) 100%);
+  }
+  .qspread.alt .qspread-scrim{
+    background:
+      linear-gradient(270deg, rgba(6,18,32,0.66) 0%, rgba(6,18,32,0.24) 40%, rgba(6,18,32,0) 64%),
+      linear-gradient(180deg, rgba(6,18,32,0.18) 0%, rgba(6,18,32,0) 28%, rgba(6,18,32,0.30) 56%, rgba(6,18,32,0.64) 78%, rgba(6,18,32,0.92) 100%);
+  }
+  /* Inset hairline frame — quiet luxury. */
+  .qspread::after{
+    content:"";position:absolute;z-index:1;pointer-events:none;
+    inset:clamp(16px,2.2vw,34px);border:1px solid rgba(255,255,255,0.20);
+  }
+  .qspread-inner{
+    position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;width:100%;
+  }
+  .qspread-text{max-width:660px;min-width:0;}
+  .qspread.alt .qspread-text{margin-left:auto;}
+  .quote-mark{
+    font-family:var(--serif);font-size:74px;line-height:0;color:var(--ac2);
+    display:block;height:34px;
+  }
+  .quote-body{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(28px,3.5vw,56px);line-height:1.12;letter-spacing:-0.012em;
+    color:#fff;text-wrap:pretty;text-shadow:0 2px 44px rgba(6,18,32,0.6);
+  }
+  .quote-cite{
+    margin-top:clamp(22px,3vh,40px);
+    font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+    color:rgba(255,255,255,0.82);
+  }
+
+  /* ------------------------------------------------------------
+     NON-QUOTE DIVIDERS — full-colour, page-takeover, hero statement.
+     ------------------------------------------------------------ */
+  .qspread.qdivider{min-height:100svh;}
+  .qspread.qdivider::after{display:none;}
+  .qspread.qdivider .qspread-scrim{
+    /* keep the photo full-colour; only ground the hero text at the bottom */
+    background:linear-gradient(180deg, rgba(6,18,32,0) 40%, rgba(6,18,32,0.12) 58%, rgba(6,18,32,0.7) 100%);
+  }
+  .qspread.qdivider .qspread-text{max-width:none;}
+  .qspread-pull{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(46px,8.4vw,138px);line-height:0.94;letter-spacing:-0.02em;
+    color:#fff;text-wrap:balance;max-width:15ch;
+    text-shadow:0 2px 54px rgba(6,18,32,0.5);
+  }
+  .qspread.qdivider.alt .qspread-pull{margin-left:auto;text-align:right;}
+
+  /* ============================================================
+     ACCORDIONS (Career + Awards)
+     ============================================================ */
+  .acc{border-top:1px solid var(--line-strong);}
+  .acc-item{border-bottom:1px solid var(--line-strong);}
+  .acc-btn{
+    cursor:pointer;width:100%;background:transparent;border:0;margin:0;
+    padding:clamp(22px,3vh,34px) 0;color:inherit;text-align:left;
+    transition:padding-left .3s ease;
+  }
+  .acc-btn:hover{padding-left:10px;}
+  .acc-sign{
+    font-family:var(--serif);font-size:34px;line-height:.6;color:var(--ink);
+    justify-self:end;
+  }
+  .acc-panel{
+    display:grid;grid-template-rows:0fr;
+    transition:grid-template-rows .45s var(--ease);
+  }
+  .acc-item.open .acc-panel{grid-template-rows:1fr;}
+  .acc-panel-inner{overflow:hidden;}
+
+  /* Career row */
+  .role-btn{
+    display:grid;grid-template-columns:minmax(120px,200px) minmax(0,1fr) auto;
+    gap:clamp(16px,4vw,56px);align-items:baseline;
+  }
+  .role-dates{
+    font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ac);
+  }
+  .role-title{
+    display:block;font-size:clamp(19px,2.4vw,29px);font-weight:700;
+    letter-spacing:.005em;text-transform:uppercase;line-height:1.08;color:var(--ink);
+  }
+  .role-org{
+    display:block;font-size:13px;font-weight:700;letter-spacing:.05em;
+    text-transform:uppercase;color:var(--muted-2);margin-top:7px;
+  }
+  .role-desc{
+    font-size:16.5px;line-height:1.55;color:var(--muted);
+    margin:0 0 clamp(24px,3.4vh,38px);max-width:70ch;text-wrap:pretty;
+  }
+  .resume-link{
+    display:inline-flex;align-items:center;gap:12px;margin-top:36px;
+    font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink);text-decoration:none;
+    border-bottom:2px solid var(--ac);padding-bottom:6px;transition:gap .2s;
+  }
+  .resume-link:hover{gap:20px;}
+
+  /* Awards row */
+  .award-btn{
+    display:grid;grid-template-columns:1fr auto;gap:24px;align-items:center;
+  }
+  .award-head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;}
+  .award-name{
+    font-size:clamp(20px,2.2vw,30px);font-weight:800;letter-spacing:.02em;
+    text-transform:uppercase;line-height:1.05;color:var(--ink);
+  }
+  .award-tally{
+    font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted-3);
+  }
+  .award-groups{
+    display:flex;flex-direction:column;gap:22px;padding-bottom:clamp(28px,4vh,42px);
+  }
+  .award-group{
+    display:grid;grid-template-columns:minmax(0,64px) minmax(0,1fr);gap:18px;
+  }
+  .award-year{font-family:var(--serif);font-size:30px;line-height:1;color:var(--ac);}
+  .award-items{display:flex;flex-direction:column;gap:11px;}
+  .award-item{font-size:16px;line-height:1.45;color:var(--muted);}
+  .award-medal{color:var(--ink);font-weight:700;}
+  .award-link{
+    color:var(--ink);font-weight:700;text-decoration:none;
+    border-bottom:1px solid rgba(20,23,28,0.25);
+    transition:border-color .2s,color .2s;
+  }
+  .award-link:hover{color:var(--ac);border-color:var(--ac);}
+
+  /* ============================================================
+     FAVORITE PROJECTS — drag rail
+     ============================================================ */
+  .rail-head{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+    flex-wrap:wrap;margin-bottom:clamp(34px,5vh,58px);
+  }
+  .rail-hint{
+    font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted-3);
+  }
+  .rail-nav{display:flex;align-items:center;gap:16px;}
+  .rail-btns{display:flex;gap:10px;}
+  .rail-btn{
+    cursor:pointer;width:50px;height:50px;border-radius:50%;
+    border:1px solid rgba(20,23,28,0.2);background:#fff;color:var(--ink);
+    font-size:18px;display:flex;align-items:center;justify-content:center;
+    transition:background .2s,color .2s,border-color .2s;
+  }
+  .rail-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .rail{
+    display:flex;gap:clamp(20px,2vw,30px);overflow-x:auto;
+    scroll-snap-type:x mandatory;padding-bottom:8px;cursor:grab;
+    scrollbar-width:none;-ms-overflow-style:none;
+  }
+  .rail::-webkit-scrollbar{display:none;}
+  .proj{
+    flex:0 0 clamp(270px,30vw,350px);scroll-snap-align:start;
+    display:flex;flex-direction:column;
+  }
+  .proj-media{text-decoration:none;color:inherit;display:block;}
+  .proj-img{
+    position:relative;aspect-ratio:4/3;overflow:hidden;
+    background:linear-gradient(135deg,#EEEFF3,#E4E6EC);
+    border:1px solid var(--line-soft);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .proj-tag{
+    font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--faint);
+  }
+  .proj-badge{
+    position:absolute;left:14px;bottom:14px;width:26px;height:26px;border-radius:50%;
+    background:var(--ink);color:#fff;display:flex;align-items:center;
+    justify-content:center;font-size:13px;
+  }
+  .proj-title{
+    font-size:16px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+    margin:20px 0 10px;line-height:1.2;
+  }
+  .proj-roles{display:flex;flex-direction:column;gap:2px;margin-bottom:14px;}
+  .proj-role{font-size:14px;color:var(--muted-2);}
+  .proj-cta{
+    margin-top:auto;align-self:flex-start;
+    font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink);text-decoration:none;
+    border-bottom:2px solid var(--ac);padding-bottom:4px;transition:color .2s;
+  }
+  .proj-cta:hover{color:var(--ac);}
+
+  /* ============================================================
+     PRESS + PANELISTS
+     ============================================================ */
+  .press-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+    gap:1px;background:var(--line);border:1px solid var(--line);
+  }
+  .press-card{
+    background:#fff;padding:clamp(26px,2.4vw,36px);
+    display:flex;flex-direction:column;gap:14px;text-decoration:none;color:inherit;
+    transition:background .3s ease;
+  }
+  .press-card:hover{background:#FAFAFB;}
+  .press-card.hidden{display:none;}
+  .press-cta{
+    font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ac);
+  }
+  .press-title{
+    font-family:var(--serif);font-weight:400;font-size:clamp(22px,1.9vw,27px);
+    line-height:1.16;color:var(--ink);text-wrap:pretty;
+  }
+  .press-desc{font-size:14.5px;line-height:1.5;color:var(--muted-2);text-wrap:pretty;}
+  .press-toggle-wrap{display:flex;justify-content:center;margin-top:30px;}
+  .press-toggle{
+    cursor:pointer;display:inline-flex;align-items:center;gap:12px;
+    background:transparent;border:1px solid rgba(20,23,28,0.25);border-radius:999px;
+    padding:14px 28px;font-size:12px;font-weight:700;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink);
+    transition:background .25s,color .25s,border-color .25s;
+  }
+  .press-toggle:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  .panelist-head{
+    font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink);margin:clamp(56px,8vh,90px) 0 28px;
+  }
+  .panelist-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:clamp(16px,2vw,24px);
+  }
+  .panelist{
+    border:1px solid var(--line);padding:24px;
+    display:flex;flex-direction:column;gap:10px;min-height:130px;
+    transition:border-color .25s,transform .25s;
+  }
+  .panelist:hover{border-color:var(--ac);transform:translateY(-3px);}
+  .panelist-event{font-family:var(--serif);font-size:20px;line-height:1.2;color:var(--ink);}
+  .panelist-date{
+    margin-top:auto;font-size:12px;font-weight:700;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--muted-2);
+  }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  .footer{
+    background:var(--ac3);color:#fff;
+    padding:clamp(70px,11vh,130px) var(--pad) 48px;
+  }
+  .footer-inner{max-width:var(--maxw);margin:0 auto;}
+  .footer-top{
+    display:flex;justify-content:space-between;align-items:flex-end;gap:32px;
+    flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,0.16);
+    padding-bottom:clamp(40px,6vh,72px);
+  }
+  .footer-kicker{
+    font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted-3);margin-bottom:18px;
+  }
+  .footer-name{
+    font-family:var(--serif);font-size:clamp(52px,9vw,128px);line-height:.85;
+    letter-spacing:-0.02em;color:#fff;text-decoration:none;display:block;
+  }
+  .footer-social{display:flex;gap:26px;flex-wrap:wrap;}
+  .footer-social a{
+    font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+    color:#fff;text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.3);
+    padding-bottom:5px;transition:border-color .2s,color .2s;
+  }
+  .footer-social a:hover{color:var(--ac);border-color:var(--ac);}
+  .footer-bottom{
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+    flex-wrap:wrap;padding-top:26px;
+  }
+  .footer-copy{font-size:12px;color:var(--muted-2);letter-spacing:.04em;}
+  .footer-top-link{
+    font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted-3);text-decoration:none;transition:color .2s;
+  }
+  .footer-top-link:hover{color:#fff;}
+
+  /* ============================================================
+     Reduced motion
+     ============================================================ */
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .reveal{opacity:1;transform:none;transition:none;}
+    .eyebrow-dot{animation:none;}
+    .px-layer{transform:none!important;}
+    *{transition-duration:.001ms!important;}
+  }
+
+  /* Section links are a desktop wayfinding nicety — on narrow screens keep
+     the nav to just logo + Resume so nothing overflows or clips. */
+  @media (max-width:760px){
+    .nav.show-links .navlink{display:none;}
+    /* Full-bleed quotes: anchor text to the bottom, darken the bottom scrim. */
+    .qspread{min-height:clamp(460px,74vh,640px);align-items:flex-end;}
+    .qspread-text,.qspread.alt .qspread-text{max-width:none;margin:0;}
+    .qspread-scrim,.qspread.alt .qspread-scrim{
+      background:linear-gradient(180deg, rgba(8,31,52,0.30) 0%, rgba(8,31,52,0.18) 34%, rgba(8,31,52,0.84) 100%);
+    }
+    .quote-body{font-size:clamp(24px,7vw,34px);}
+    .qspread-pull{font-size:clamp(40px,11vw,66px);max-width:14ch;}
+
+    /* Hero: photo on top showing AJ, text below on white — no overlap. */
+    .hero{display:block;min-height:0;overflow:visible;padding:0 0 clamp(36px,7vh,60px);}
+    .hero-photo{position:relative;inset:auto;height:64vh;}
+    .hero-photo img{object-fit:cover;object-position:14% 18%;}
+    .hero-veil{background:linear-gradient(180deg, rgba(255,255,255,0) 56%, rgba(255,255,255,0.96) 100%);}
+    .hero-content{width:auto;margin:clamp(-52px,-8vh,-32px) var(--pad) 0;}
+    .scroll-cue{display:none;}
+  }
+
+  @media (max-width:640px){
+    .role-btn{grid-template-columns:1fr auto;gap:14px 16px;}
+    .role-dates{grid-column:1;}
+    .role-btn > span:nth-child(2){grid-column:1 / -1;order:3;}
+    .acc-sign{grid-column:2;grid-row:1;}
+  }
+</style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- ============================ NAV ============================ -->
+  <nav class="nav" id="nav">
+    <a href="#overview" class="nav-logo">AJ Curry</a>
+    <div class="nav-right">
+      <a class="navlink" href="#highlights">Highlights</a>
+      <a class="navlink" href="#career">Career</a>
+      <a class="navlink" href="#awards">Awards</a>
+      <a class="navlink" href="#projects">Projects</a>
+      <a class="navlink" href="#press">Press</a>
+      <a class="nav-cta" href="https://www.ajcurry.com/resume" target="_blank" rel="noopener">Resume</a>
+    </div>
+  </nav>
+
+  <!-- ============================ HERO ============================ -->
+  <header class="hero" id="overview">
+    <div class="hero-photo">
+      <img src="images/hero.jpg?v=4" alt="AJ Curry pointing at the camera">
+      <div class="hero-veil" aria-hidden="true"></div>
+    </div>
+    <div class="hero-content">
+      <div class="eyebrow reveal">
+        <span class="eyebrow-dot" aria-hidden="true"></span>
+        <span class="eyebrow-text">Emmy Award-Winning Marketing Executive</span>
+      </div>
+      <h1 class="hero-title reveal">AJ Curry</h1>
+      <p class="hero-intro reveal">
+        Emmy Award-winning marketing executive with 12 years of experience building social, content, experiential, and influencer strategies for some of the most iconic brands in sports and entertainment. Known for creating revenue-driving social programs, scaling influencer networks to <b>3B+ reach</b>, turning cultural moments into measurable growth, and breaking the internet.
+      </p>
+    </div>
+    <nav class="hero-social" aria-label="Social media">
+      <span class="hero-social-label" aria-hidden="true">Follow</span>
+      <a class="hero-social-link" href="https://x.com/aj_curry" target="_blank" rel="noopener" aria-label="X (Twitter)">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+      </a>
+      <a class="hero-social-link" href="http://www.instagram.com/aj_curry" target="_blank" rel="noopener" aria-label="Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.05" fill="currentColor" stroke="none"/></svg>
+      </a>
+      <a class="hero-social-link" href="https://www.tiktok.com/@aj_curry" target="_blank" rel="noopener" aria-label="TikTok">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+      </a>
+      <a class="hero-social-link" href="https://www.snapchat.com/add/aj_curry" target="_blank" rel="noopener" aria-label="Snapchat">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.42.839-1.288 1.179-.089.029-.209.075-.344.119-.45.135-1.139.36-1.319.81-.09.225-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.282-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.074-.36-.075-.765-.135-1.273-.135-.3 0-.599.015-.913.074-.6.104-1.123.464-1.723.884-.853.599-1.826 1.288-3.294 1.288-.06 0-.119-.015-.18-.015h-.149c-1.468 0-2.427-.675-3.279-1.288-.599-.42-1.107-.779-1.707-.884-.314-.045-.629-.074-.928-.074-.54 0-.958.089-1.272.149-.211.043-.391.074-.54.074-.374 0-.523-.224-.583-.42-.061-.192-.09-.389-.135-.567-.046-.181-.105-.494-.166-.57-1.918-.222-2.95-.642-3.189-1.226-.03-.061-.046-.135-.046-.225-.015-.24.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.643.119-.853-.165-.434-.853-.658-1.302-.793-.135-.045-.255-.09-.345-.119-1.184-.464-1.288-.93-1.243-1.169.06-.345.464-.59.838-.59.135 0 .254.029.355.074.318.146.654.218.971.218.273 0 .442-.072.493-.094-.01-.15-.022-.318-.03-.49l-.003-.06c-.103-1.626-.229-3.652.3-4.847C7.857 1.077 11.214.793 12.206.793z"/></svg>
+      </a>
+    </nav>
+    <a href="#highlights" class="scroll-cue" aria-label="Scroll down">
+      Scroll
+      <span class="line" aria-hidden="true"></span>
+    </a>
+  </header>
+
+  <!-- ========================= HIGHLIGHTS ========================= -->
+  <section class="section" id="highlights">
+    <div class="section-head reveal">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Highlights</h2>
+    </div>
+    <div class="hl-accordion reveal card" id="hl-grid"></div>
+  </section>
+
+  <!-- ===================== QUOTE SPREAD — DIVIDER 1 ===================== -->
+  <section class="qspread qdivider">
+    <div class="qspread-photo">
+      <div class="px-layer js-parallax" data-speed="0.07">
+        <img class="qspread-img" src="images/quote-div1.jpg" alt="AJ Curry at the NFL Draft" loading="lazy" style="object-position:64% 30%">
+      </div>
+    </div>
+    <div class="qspread-scrim" aria-hidden="true"></div>
+    <div class="qspread-inner">
+      <div class="qspread-text reveal">
+        <p class="qspread-pull">Turning cultural moments into measurable growth.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ QUOTE 1 ============================ -->
+  <section class="qspread">
+    <div class="qspread-photo">
+      <div class="px-layer js-parallax" data-speed="0.07">
+        <img class="qspread-img" src="images/quote-1.jpg?v=5" alt="AJ Curry on a red carpet media line" loading="lazy" style="object-position:56% 26%">
+      </div>
+    </div>
+    <div class="qspread-scrim" aria-hidden="true"></div>
+    <div class="qspread-inner">
+      <figure class="qspread-text reveal">
+        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+        <blockquote class="quote-body">From organizing epic IRL events, to negotiating six figure partnerships, to working with athletes and finding authentic collaborations, AJ&rsquo;s blend of elite creativity and pragmatism makes her an ideal teammate and true game changing talent.</blockquote>
+        <figcaption class="quote-cite">— Jacob Eisenberg, Senior Leader at Dapper Labs</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================ CAREER ============================ -->
+  <section class="section" id="career">
+    <div class="section-head reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Career</h2>
+    </div>
+    <div class="acc reveal card" id="career-acc"></div>
+    <a class="resume-link reveal" href="https://www.ajcurry.com/resume" target="_blank" rel="noopener">View full résumé <span aria-hidden="true">→</span></a>
+  </section>
+
+  <!-- ============================ QUOTE 2 ============================ -->
+  <section class="qspread alt">
+    <div class="qspread-photo">
+      <div class="px-layer js-parallax" data-speed="0.07">
+        <img class="qspread-img" src="images/quote-2.jpg" alt="AJ Curry shooting a player in the end zone" loading="lazy" style="object-position:38% 36%">
+      </div>
+    </div>
+    <div class="qspread-scrim" aria-hidden="true"></div>
+    <div class="qspread-inner">
+      <figure class="qspread-text reveal">
+        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+        <blockquote class="quote-body">She is brilliant, hard-working, creative and makes everyone around her better. Not only does AJ dream big, but she also executes big visions and brings them to life at the highest quality possible.</blockquote>
+        <figcaption class="quote-cite">— Hali Stark, Head of Partnership Marketing at Dapper Labs</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================ AWARDS ============================ -->
+  <section class="section" id="awards">
+    <div class="section-head reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Awards</h2>
+    </div>
+    <div class="acc reveal card" id="awards-acc"></div>
+  </section>
+
+  <!-- ============================ QUOTE 3 ============================ -->
+  <section class="qspread">
+    <div class="qspread-photo">
+      <div class="px-layer js-parallax" data-speed="0.07">
+        <img class="qspread-img" src="images/quote-3.jpg" alt="AJ Curry with a group" loading="lazy" style="object-position:60% 30%">
+      </div>
+    </div>
+    <div class="qspread-scrim" aria-hidden="true"></div>
+    <div class="qspread-inner">
+      <figure class="qspread-text reveal">
+        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+        <blockquote class="quote-body">You won&rsquo;t find a more creative, passionate, hard-working, community-first, smart and just Grade A+ person out there than AJ.</blockquote>
+        <figcaption class="quote-cite">— Dave Feldman, SVP of Marketing at Dapper Labs</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ======================= FAVORITE PROJECTS ======================= -->
+  <section class="section" id="projects">
+    <div class="rail-head reveal">
+      <div class="section-head" style="margin:0;">
+        <span class="section-num">04</span>
+        <h2 class="section-title">Favorite Projects</h2>
+      </div>
+      <div class="rail-nav">
+        <span class="rail-hint">Drag to explore</span>
+        <div class="rail-btns">
+          <button class="rail-btn" id="proj-prev" aria-label="Previous projects">←</button>
+          <button class="rail-btn" id="proj-next" aria-label="Next projects">→</button>
+        </div>
+      </div>
+    </div>
+    <div class="rail" id="proj-rail"></div>
+  </section>
+
+  <!-- ===================== QUOTE SPREAD — DIVIDER 2 ===================== -->
+  <section class="qspread alt qdivider">
+    <div class="qspread-photo">
+      <div class="px-layer js-parallax" data-speed="0.07">
+        <img class="qspread-img" src="images/quote-div2.jpg" alt="AJ Curry with Patrick Mahomes" loading="lazy" style="object-position:44% 34%">
+      </div>
+    </div>
+    <div class="qspread-scrim" aria-hidden="true"></div>
+    <div class="qspread-inner">
+      <div class="qspread-text reveal">
+        <p class="qspread-pull">And, occasionally, breaking the internet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ QUOTE 4 ============================ -->
+  <section class="qspread">
+    <div class="qspread-photo">
+      <div class="px-layer js-parallax" data-speed="0.07">
+        <img class="qspread-img" src="images/quote-4.jpg" alt="Dana White, Rey Mysterio and others" loading="lazy" style="object-position:52% 20%">
+      </div>
+    </div>
+    <div class="qspread-scrim" aria-hidden="true"></div>
+    <div class="qspread-inner">
+      <figure class="qspread-text reveal">
+        <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+        <blockquote class="quote-body">Not only is she one of the most creative people I&rsquo;ve ever worked with, but one of the most creative people I have ever met.</blockquote>
+        <figcaption class="quote-cite">— Zack Billingham, Community Manager at Dapper Labs</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================ PRESS ============================ -->
+  <section class="section" id="press">
+    <div class="section-head reveal">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Press &amp; Features</h2>
+    </div>
+    <div class="press-grid reveal card" id="press-grid"></div>
+    <div class="press-toggle-wrap">
+      <button class="press-toggle" id="press-toggle"></button>
+    </div>
+
+    <h3 class="panelist-head reveal">Featured Panelist</h3>
+    <div class="panelist-grid reveal card" id="panelist-grid"></div>
+  </section>
+
+  <!-- ============================ FOOTER ============================ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div>
+          <p class="footer-kicker">Let&rsquo;s build something iconic</p>
+          <a href="#overview" class="footer-name">AJ Curry</a>
+        </div>
+        <div class="footer-social">
+          <a href="http://www.instagram.com/aj_curry" target="_blank" rel="noopener">Instagram</a>
+          <a href="http://www.twitter.com/aj_curry" target="_blank" rel="noopener">Twitter</a>
+          <a href="https://www.linkedin.com/in/amandajcurry" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© AJ Curry. All rights reserved.</span>
+        <a href="#overview" class="footer-top-link">Back to top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="lenis.min.js"></script>
+  <script src="image-slot.js"></script>
+  <script src="app.js?v=3"></script>
+  <script>
+  /* Premium momentum smooth scrolling via Lenis. Falls back to native smooth
+     anchor scrolling when Lenis is unavailable or reduced-motion is on. */
+  (function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var navH = function(){ var n = document.getElementById('nav'); return n ? n.offsetHeight : 80; };
+    function bindAnchors(scrollTo){
+      document.querySelectorAll('a[href^="#"]').forEach(function(a){
+        a.addEventListener('click', function(e){
+          var id = a.getAttribute('href');
+          if (!id || id.length < 2) return;
+          var t = document.querySelector(id);
+          if (!t) return;
+          e.preventDefault();
+          scrollTo(t);
+          if (history.pushState) history.pushState(null, '', id);
+        });
+      });
+    }
+    if (reduce || typeof Lenis === 'undefined'){
+      bindAnchors(function(t){ t.scrollIntoView({ behavior:'smooth', block:'start' }); });
+      return;
+    }
+    var lenis = new Lenis({
+      duration: 1.05,
+      easing: function(t){ return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+      smoothWheel: true
+    });
+    function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    bindAnchors(function(t){ lenis.scrollTo(t, { offset: -(navH() + 4), duration: 1.2 }); });
+    window.__lenis = lenis;
+  })();
+  </script>
+</body>
+</html>
