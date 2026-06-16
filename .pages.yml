@@ -1,0 +1,397 @@
+# Pages CMS configuration — https://pagescms.org
+# Edit this site's content at https://app.pagescms.org (sign in with GitHub,
+# open the RestainoCreative/aj-curry-portfolio repo).
+#
+# All content lives in data/content.json. The site (app.js) renders the page
+# from that file, so saving here updates the live site after GitHub Pages
+# rebuilds (~1 min).
+
+media:
+  input: images          # uploads are saved here, in the repo
+  output: images         # ...and referenced by this path on the site
+  extensions: [jpg, jpeg, png, webp, gif, svg]
+  categories: [image]
+
+content:
+  - name: content
+    label: Website
+    type: file
+    path: data/content.json
+    format: json
+    fields:
+      # ---------------------------------------------------------------- HERO
+      - name: hero
+        label: Hero — top of page
+        type: object
+        fields:
+          - name: eyebrow
+            label: Eyebrow (small line above the name)
+            type: string
+          - name: name
+            label: Name (large headline)
+            type: string
+          - name: intro
+            label: Intro paragraph
+            type: text
+            description: "Wrap any words in **double asterisks** to make them bold."
+          - name: image
+            label: Hero photo
+            type: image
+          - name: imagePosition
+            label: Photo focal point
+            type: string
+            default: "48% 18%"
+            description: "CSS object-position as 'X% Y%'. Lower the second number to show more of the top of the photo."
+          - name: imageAlt
+            label: Photo description (accessibility / SEO)
+            type: string
+          - name: social
+            label: Social icons (right-hand rail)
+            type: object
+            list:
+              collapsible:
+                summary: "{platform}"
+            fields:
+              - name: platform
+                label: Platform
+                type: select
+                options:
+                  values: [x, instagram, tiktok, snapchat, linkedin, youtube]
+              - name: url
+                label: Profile URL
+                type: string
+
+      # ------------------------------------------------------------ SECTIONS
+      - name: sections
+        label: Page sections (drag to reorder)
+        type: block
+        blockKey: type
+        list:
+          collapsible:
+            summary: "{type}"
+        blocks:
+          # ---- Highlights ----
+          - name: highlights
+            label: Highlights
+            fields:
+              - name: title
+                label: Section title
+                type: string
+                default: Highlights
+              - name: navLabel
+                label: Nav menu label
+                type: string
+                description: "Short label shown in the top navigation. Defaults to the section title."
+              - name: items
+                label: Highlight items
+                type: object
+                list:
+                  collapsible:
+                    summary: "{text}"
+                fields:
+                  - name: icon
+                    label: Icon
+                    type: select
+                    options:
+                      values: [award, gem, star, tv, music, video, grid, mic, broadcast, sparkle, users, play]
+                  - name: text
+                    label: Highlight text
+                    type: text
+                    description: "Wrap words in **double asterisks** to bold them."
+
+          # ---- Testimonial quote (photo) ----
+          - name: quote
+            label: Testimonial (photo + quote)
+            fields:
+              - name: image
+                label: Photo
+                type: image
+              - name: imagePosition
+                label: Photo focal point
+                type: string
+                default: "center 32%"
+                description: "CSS object-position as 'X% Y%'."
+              - name: imageAlt
+                label: Photo description
+                type: string
+              - name: quote
+                label: Quote
+                type: text
+              - name: citation
+                label: Attribution (name, title)
+                type: string
+              - name: side
+                label: Quote position
+                type: select
+                default: left
+                options:
+                  values:
+                    - { value: left, label: Left }
+                    - { value: right, label: Right }
+
+          # ---- Photo statement (full-screen divider) ----
+          - name: divider
+            label: Photo statement (full-screen)
+            fields:
+              - name: image
+                label: Photo
+                type: image
+              - name: imagePosition
+                label: Photo focal point
+                type: string
+                default: "center 30%"
+                description: "CSS object-position as 'X% Y%'."
+              - name: imageAlt
+                label: Photo description
+                type: string
+              - name: headline
+                label: Big statement line
+                type: text
+              - name: side
+                label: Text position
+                type: select
+                default: left
+                options:
+                  values:
+                    - { value: left, label: Left }
+                    - { value: right, label: Right }
+
+          # ---- Career ----
+          - name: career
+            label: Career
+            fields:
+              - name: title
+                label: Section title
+                type: string
+                default: Career
+              - name: navLabel
+                label: Nav menu label
+                type: string
+                description: "Short label shown in the top navigation. Defaults to the section title."
+              - name: resumeLabel
+                label: Résumé link text
+                type: string
+                default: "View full résumé"
+              - name: resumeUrl
+                label: Résumé link URL
+                type: string
+              - name: roles
+                label: Roles
+                type: object
+                list:
+                  collapsible:
+                    summary: "{title}"
+                fields:
+                  - name: dates
+                    label: Dates
+                    type: string
+                  - name: title
+                    label: Job title
+                    type: string
+                  - name: org
+                    label: Company
+                    type: string
+                  - name: desc
+                    label: Description
+                    type: text
+
+          # ---- Awards ----
+          - name: awards
+            label: Awards
+            fields:
+              - name: title
+                label: Section title
+                type: string
+                default: Awards
+              - name: navLabel
+                label: Nav menu label
+                type: string
+                description: "Short label shown in the top navigation. Defaults to the section title."
+              - name: orgs
+                label: Award organizations
+                type: object
+                list:
+                  collapsible:
+                    summary: "{name}"
+                fields:
+                  - name: name
+                    label: Organization
+                    type: string
+                  - name: groups
+                    label: Years
+                    type: object
+                    list:
+                      collapsible:
+                        summary: "{year}"
+                    fields:
+                      - name: year
+                        label: Year
+                        type: string
+                      - name: items
+                        label: Honors
+                        type: object
+                        list:
+                          collapsible:
+                            summary: "{title}"
+                        fields:
+                          - name: medal
+                            label: Medal
+                            type: select
+                            options:
+                              values:
+                                - { value: "🏆", label: "🏆 Winner" }
+                                - { value: "🥇", label: "🥇 Gold" }
+                                - { value: "🥈", label: "🥈 Silver" }
+                                - { value: "🥉", label: "🥉 Bronze" }
+                                - { value: "", label: "— None" }
+                          - name: title
+                            label: Award title
+                            type: string
+                          - name: href
+                            label: Link URL
+                            type: string
+                          - name: detail
+                            label: Detail
+                            type: string
+
+          # ---- Favorite Projects ----
+          - name: projects
+            label: Favorite Projects
+            fields:
+              - name: title
+                label: Section title
+                type: string
+                default: Favorite Projects
+              - name: navLabel
+                label: Nav menu label
+                type: string
+                description: "Short label shown in the top navigation. Defaults to the section title."
+              - name: hint
+                label: Hint text (above the rail)
+                type: string
+                default: Drag to explore
+              - name: items
+                label: Projects
+                type: object
+                list:
+                  collapsible:
+                    summary: "{title}"
+                fields:
+                  - name: title
+                    label: Project title
+                    type: string
+                  - name: roles
+                    label: Roles
+                    type: string
+                    list: true
+                  - name: tag
+                    label: Tag (Campaign, Production, Activation…)
+                    type: string
+                  - name: cta
+                    label: Button text
+                    type: string
+                    default: Learn more
+                  - name: href
+                    label: Link URL
+                    type: string
+
+          # ---- Press & Features ----
+          - name: press
+            label: Press & Features
+            fields:
+              - name: title
+                label: Section title
+                type: string
+                default: Press & Features
+              - name: navLabel
+                label: Nav menu label
+                type: string
+                description: "Short label shown in the top navigation. Defaults to the section title."
+              - name: items
+                label: Articles
+                type: object
+                list:
+                  collapsible:
+                    summary: "{title}"
+                fields:
+                  - name: cta
+                    label: Button text
+                    type: select
+                    default: Read
+                    options:
+                      values:
+                        - { value: Read, label: Read }
+                        - { value: Watch, label: Watch }
+                  - name: title
+                    label: Headline
+                    type: string
+                  - name: desc
+                    label: Summary
+                    type: text
+                  - name: href
+                    label: Link URL
+                    type: string
+              - name: panelistTitle
+                label: Panelist subheading
+                type: string
+                default: Featured Panelist
+              - name: panelists
+                label: Featured panelist events
+                type: object
+                list:
+                  collapsible:
+                    summary: "{event}"
+                fields:
+                  - name: event
+                    label: Event
+                    type: string
+                  - name: date
+                    label: Date
+                    type: string
+
+      # -------------------------------------------------------------- FOOTER
+      - name: footer
+        label: Footer
+        type: object
+        fields:
+          - name: kicker
+            label: Kicker line
+            type: string
+          - name: name
+            label: Name
+            type: string
+            default: AJ Curry
+          - name: social
+            label: Footer links
+            type: object
+            list:
+              collapsible:
+                summary: "{label}"
+            fields:
+              - name: label
+                label: Label
+                type: string
+              - name: url
+                label: URL
+                type: string
+          - name: copyright
+            label: Copyright line
+            type: string
+
+      # ---------------------------------------------------------- NAVIGATION
+      - name: nav
+        label: Navigation & Résumé button
+        type: object
+        description: "The top-nav section links are generated automatically from your sections. Only the logo and the Résumé button are set here."
+        fields:
+          - name: logo
+            label: Logo text
+            type: string
+            default: AJ Curry
+          - name: resumeLabel
+            label: Résumé button text
+            type: string
+            default: Resume
+          - name: resumeUrl
+            label: Résumé button URL
+            type: string

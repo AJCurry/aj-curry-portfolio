@@ -1,7 +1,9 @@
 /* =====================================================================
    AJ Curry — Portfolio
-   Content (verbatim from ajcurry.com) + interactions.
-   Rendered data-driven so the copy lives in one place and stays exact.
+   Data-driven renderer. All content lives in data/content.json so it can
+   be edited through Pages CMS (.pages.yml). This script fetches that file,
+   builds the page (nav, hero, body sections, footer) into the same markup
+   the design uses, then wires up the interactions.
    ===================================================================== */
 (() => {
   'use strict';
@@ -21,28 +23,26 @@
     return n;
   };
 
-  /* ============================== DATA ============================== */
+  /* ---------- helpers ---------- */
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const stripBold = (t) => String(t == null ? '' : t).replace(/\*\*/g, '');
+  // `**word**` → an emphasis element; everything else → text nodes.
+  const mdBold = (text, tag) => {
+    const parts = String(text == null ? '' : text).split('**');
+    return parts.map((p, i) => {
+      if (p === '') return null;
+      return i % 2 === 1 ? el(tag, { text: p }) : document.createTextNode(p);
+    }).filter(Boolean);
+  };
+  // Normalise an image path from the CMS to a URL relative to this page,
+  // so it works whether the site is at the domain root or under a subpath.
+  const assetUrl = (p) => {
+    if (!p) return '';
+    if (/^https?:\/\//.test(p)) return p;
+    return String(p).replace(/^\/+/, '').replace(/^aj-curry-portfolio\//, '');
+  };
 
-  // em → emphasized (ink, 600); plain → body. Mirrors the design's segments.
-  const E = (t) => ({ t, em: true });
-  const T = (t) => ({ t, em: false });
-
-  const highlights = [
-    { n: '01', icon: 'award', segs: [T('Winner of the '), E('2019 Emmy Award'), T(' for Outstanding Trans-Media Sports Coverage')] },
-    { n: '02', icon: 'gem', segs: [T('Was a lead on the team that launched the '), E('officially licensed NFT product'), T(', NFL ALL DAY')] },
-    { n: '03', icon: 'star', segs: [T('Named to The Athletic’s NFL '), E('40 Under 40'), T(' List')] },
-    { n: '04', icon: 'tv', segs: [E('Produced a national commercial'), T(' for the NFL which aired across primetime games')] },
-    { n: '05', icon: 'music', segs: [T('Helped lead the first ever music partnership to '), E('bring Quavo to NBA Top Shot')] },
-    { n: '06', icon: 'video', segs: [T('Conceptualized and produced the '), E('NFL’s Showtime Cam'), T(', sponsored by Twitter and Bud Light, which won the Clio grand award for best in Social Media')] },
-    { n: '07', icon: 'grid', segs: [T('Created the '), E('NFL’s first-ever Emerging Platforms team'), T(' to manage’s the NFL’s social presence on new, Gen-Z focused channels')] },
-    { n: '08', icon: 'mic', segs: [T('Featured speaker and panelist at '), E('SXSW, NFL Network’s Total Access, Twitter’s Sports Summit'), T(', and more.')] },
-    { n: '09', icon: 'broadcast', segs: [T('Served as a lead producer for the NFL’s first-ever Draft-A-Thon livestream, contributing to the '), E('100M raised by the NFL for COVID relief')] },
-    { n: '10', icon: 'sparkle', segs: [T('Helped '), E('print tweets on Super Bowl confetti'), T(' in partnership with Twitter')] },
-    { n: '11', icon: 'users', segs: [T('Led the '), E('community strategy across products'), T(' for Dapper Labs')] },
-    { n: '12', icon: 'play', segs: [E('Taught the Commissioner'), T(' the Toosie Slide which he debuted on the NFL’s TikTok account')] }
-  ];
-
-  // Simple stroke icons (24×24) for each highlight.
+  /* ---------- icon set (highlights) ---------- */
   const _svg = (p) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + p + '</svg>';
   const ICONS = {
     award: _svg('<circle cx="12" cy="8" r="5"/><path d="M8.5 12.6 7 21l5-3 5 3-1.5-8.4"/>'),
@@ -59,156 +59,18 @@
     play: _svg('<circle cx="12" cy="12" r="9"/><path d="M10 8.4 16 12l-6 3.6z"/>')
   };
 
-  const roles = [
-    { dates: 'Jan 2025 — Present', title: 'Vice President, Social Content', org: 'Fiume Capital', desc: 'Elevated to Vice President with a key focus on Thrill Sports and its properties, Power Slap, Nitro Circus, and Street League Skateboarding, overseeing the marketing, social, and content teams.' },
-    { dates: 'Apr 2023 — Jan 2025', title: 'Sr Director, Social Content Strategy', org: 'Fiume Capital', desc: 'Served as the lead social, marketing, influencer, and content operating partner for the entire Fiume Capital portfolio.' },
-    { dates: 'May 2021 — Apr 2023', title: 'Marketing / Community Lead', org: 'Dapper Labs', desc: 'Oversaw development, marketing, athlete engagement, and community growth of the NFL’s flagship product with Dapper.' },
-    { dates: 'May 2019 — May 2021', title: 'Senior Manager, Social Content', org: 'NFL', desc: 'Led cross-platform social innovation and tentpole content activations for the NFL, launching new channels, campaigns, and creator programs to drive youth engagement and platform partnerships.' },
-    { dates: 'Aug 2018 — May 2019', title: 'Manager, Social Content', org: 'NFL', desc: 'Oversaw creative production and original content strategy for NFL social channels, leading a multi-faceted creative team and driving high-impact storytelling.' },
-    { dates: 'Apr 2016 — Aug 2018', title: 'Social Content Producer', org: 'NFL', desc: 'Launched the NFL’s official Snapchat Discover channel, and created original graphics, animations, and live content for NFL social with a key focus on driving engagement through innovative storytelling.' },
-    { dates: 'Sep 2014 — Apr 2016', title: 'Manager, Sports Marketing', org: 'Lineage Interactive', desc: 'Managed social strategy and content for 20+ top-tier professional athletes, driving growth through consistent brand development, always-on programming, and authentic fan engagement.' }
-  ];
+  /* ---------- social glyphs (hero rail) ---------- */
+  const SOCIAL = {
+    x: { label: 'X (Twitter)', svg: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>' },
+    twitter: { label: 'X (Twitter)', svg: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>' },
+    instagram: { label: 'Instagram', svg: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="18" height="18" rx="5.2"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.05" fill="currentColor" stroke="none"/></svg>' },
+    tiktok: { label: 'TikTok', svg: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>' },
+    snapchat: { label: 'Snapchat', svg: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3-.016.659-.12 1.033-.301.165-.088.344-.104.464-.104.182 0 .359.029.509.09.45.149.734.479.734.838.015.449-.42.839-1.288 1.179-.089.029-.209.075-.344.119-.45.135-1.139.36-1.319.81-.09.225-.061.524.12.868l.015.015c.06.136 1.526 3.475 4.791 4.014.255.044.435.27.42.509 0 .075-.015.149-.045.225-.24.569-1.273.988-3.146 1.282-.059.091-.12.375-.164.57-.029.179-.074.36-.134.553-.076.271-.27.405-.555.405h-.03c-.135 0-.313-.031-.538-.074-.36-.075-.765-.135-1.273-.135-.3 0-.599.015-.913.074-.6.104-1.123.464-1.723.884-.853.599-1.826 1.288-3.294 1.288-.06 0-.119-.015-.18-.015h-.149c-1.468 0-2.427-.675-3.279-1.288-.599-.42-1.107-.779-1.707-.884-.314-.045-.629-.074-.928-.074-.54 0-.958.089-1.272.149-.211.043-.391.074-.54.074-.374 0-.523-.224-.583-.42-.061-.192-.09-.389-.135-.567-.046-.181-.105-.494-.166-.57-1.918-.222-2.95-.642-3.189-1.226-.03-.061-.046-.135-.046-.225-.015-.24.165-.465.42-.509 3.264-.54 4.73-3.879 4.791-4.02l.016-.029c.18-.345.224-.643.119-.853-.165-.434-.853-.658-1.302-.793-.135-.045-.255-.09-.345-.119-1.184-.464-1.288-.93-1.243-1.169.06-.345.464-.59.838-.59.135 0 .254.029.355.074.318.146.654.218.971.218.273 0 .442-.072.493-.094-.01-.15-.022-.318-.03-.49l-.003-.06c-.103-1.626-.229-3.652.3-4.847C7.857 1.077 11.214.793 12.206.793z"/></svg>' },
+    linkedin: { label: 'LinkedIn', svg: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM10 9h3.8v1.64h.05c.53-.95 1.83-1.95 3.76-1.95 4.02 0 4.76 2.65 4.76 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.08 1.4-2.08 2.85V21h-4z"/></svg>' },
+    youtube: { label: 'YouTube', svg: '<svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor"><path d="M23 12s0-3.2-.4-4.7a2.5 2.5 0 0 0-1.8-1.8C19.3 5 12 5 12 5s-7.3 0-8.8.5A2.5 2.5 0 0 0 1.4 7.3C1 8.8 1 12 1 12s0 3.2.4 4.7a2.5 2.5 0 0 0 1.8 1.8C4.7 19 12 19 12 19s7.3 0 8.8-.5a2.5 2.5 0 0 0 1.8-1.8C23 15.2 23 12 23 12zM9.8 15.3V8.7l5.7 3.3z"/></svg>' }
+  };
 
-  const awards = [
-    { name: 'Sports Emmys', groups: [
-      { year: '2020', items: [{ medal: '🏆 ', title: 'Best Trans-Media Sports Coverage', href: 'https://twitter.com/sportsemmys/status/1293357658993561606?lang=en', detail: 'Winner for NFL 100 Greatest & All-Time Team' }] }
-    ]},
-    { name: 'Clios', groups: [
-      { year: '2021', items: [{ medal: '🏆 ', title: 'Social Media', href: 'https://clios.com/sports/winner/social-media/national-football-league/nfl-showtimecam-98863', detail: 'Clio Sports Grand Winner for NFL #ShowtimeCam' }] },
-      { year: '2020', items: [
-        { medal: '🥈 ', title: 'Social Media, Single Platform', href: 'https://clios.com/sports/winner/social-media/nfl-twitter/twitter-confetti-super-bowl-liv-83104', detail: 'Silver Winner for Twitter Confetti: Super Bowl LIV' },
-        { medal: '', title: 'Partnerships, Sponsorships and Collaborations', href: 'https://clios.com/sports/winner/partnerships-sponsorships-collaborations/nfl-twitter/twitter-confetti-super-bowl-liv-83107', detail: 'Shortlist for Twitter Confetti: Super Bowl LIV' }
-      ]}
-    ]},
-    { name: 'Sports Business Journal', groups: [
-      { year: '2021', items: [{ medal: '', title: 'Best in Sports Social Media', href: 'https://www.sportsbusinessjournal.com/Journal/Issues/2011/03/14/People-and-Pop-Culture', detail: 'Finalist for NFL #ShowtimeCam' }] }
-    ]},
-    { name: 'Webby Awards', groups: [
-      { year: '2020', items: [
-        { medal: '🏆 ', title: 'Best in Sports', href: 'https://winners.webbyawards.com/2020/social/general-social/sports/129864/nfl-tiktok', detail: 'Winner for NFL TikTok' },
-        { medal: '', title: 'Best Social Video Series', href: 'https://winners.webbyawards.com/2020/social/features/best-social-video-series/129871/nfl-draft-letters', detail: 'Nominee for NFL Draft Letters' },
-        { medal: '', title: 'Best Sports Series & Campaigns', href: 'https://winners.webbyawards.com/2020/social/social-content-series-campaigns/sports-series-campaigns/128977/nfl100', detail: 'Nominee for #NFL100' }
-      ]},
-      { year: '2019', items: [{ medal: '', title: 'Best Overall Social Presence - Brand', href: 'https://winners.webbyawards.com/2019/social/features/best-overall-social-presence-brand/94651/nfl-social-lab', detail: 'Nominee for NFL Social Lab' }] }
-    ]},
-    { name: 'Shorty Awards', groups: [
-      { year: '2020', items: [
-        { medal: '🥇 ', title: 'Best TikTok Partnership', href: 'https://shortyawards.com/12th/nfls-weready-tiktok-campaign', detail: 'Gold Distinction for NFL’S #WEREADY TIKTOK CAMPAIGN' },
-        { medal: '🥈 ', title: 'Best GIFs', href: 'https://shortyawards.com/12th/nfls-official-giphy-account', detail: 'Silver Distinction for NFL’S OFFICIAL GIPHY ACCOUNT' },
-        { medal: '', title: 'Best Use of TikTok', href: 'https://shortyawards.com/12th/nfls-weready-tiktok-campaign', detail: 'Finalist for NFL’S #WEREADY TIKTOK CAMPAIGN' },
-        { medal: '', title: 'Best Hashtag', href: 'https://shortyawards.com/12th/nfl100-a-year-long-celebration', detail: 'Finalist for #NFL100: A YEAR-LONG CELEBRATION' },
-        { medal: '', title: 'Best Snapchat Discover', href: 'https://shortyawards.com/12th/nfl-shows-on-snapchat', detail: 'Finalist for NFL SHOWS ON SNAPCHAT' }
-      ]},
-      { year: '2019', items: [
-        { medal: '🏆 ', title: 'Best Meme', href: 'https://shortyawards.com/11th/ron-from-accounting', detail: 'Winner for RON FROM ACCOUNTING' },
-        { medal: '🥇 ', title: 'Best Comedy Video', href: 'https://shortyawards.com/11th/nfl-rookies-draw-team-logos', detail: 'Gold Distinction for NFL ROOKIES DRAW TEAM LOGOS' },
-        { medal: '🥇 ', title: 'Best Graphics', href: 'https://shortyawards.com/11th/nfl-social-lab', detail: 'Gold Distinction for NFL SOCIAL LAB' },
-        { medal: '🥇 ', title: 'Best Instagram Presence', href: 'https://shortyawards.com/11th/nfl-throwback-instagram-account', detail: 'Gold Distinction for NFL THROWBACK ON INSTAGRAM' },
-        { medal: '', title: 'Best Images', href: 'https://shortyawards.com/11th/nfl-pro-football-hall-of-fame-2018-goats', detail: 'Finalist for NFL PRO FOOTBALL HALL OF FAME G.O.A.T.S' },
-        { medal: '', title: 'Best Snapchat Presence', href: 'https://shortyawards.com/11th/nfl-snapchat', detail: 'Finalist for NFL SNAPCHAT' },
-        { medal: '', title: 'Best Snapchat Discover Story', href: 'https://shortyawards.com/11th/nfl-snapchat-highlights-edition', detail: 'Finalist for NFL HIGHLIGHTS - A NEW NFL SNAPCHAT DISCOVER STORY' }
-      ]},
-      { year: '2018', items: [
-        { medal: '', title: 'Best Art Direction', href: 'https://shortyawards.com/10th/nfl-social-media-creative-lab', detail: 'Finalist for NFL SOCIAL MEDIA CREATIVE LAB' },
-        { medal: '', title: 'Best Graphics', href: 'https://shortyawards.com/10th/nfls-social-lab', detail: 'Finalist for NFL SOCIAL CREATIVE LAB' },
-        { medal: '', title: 'Best in Sports', href: 'https://shortyawards.com/10th/thecheckdown-2', detail: 'Finalist for @THECHECKDOWN' },
-        { medal: '', title: 'Best Snapchat Presence', href: 'https://shortyawards.com/10th/nfl-snapchat-discover-live-story-and-my-story', detail: 'Finalist for THE NFL ON SNAPCHAT' }
-      ]},
-      { year: '2017', items: [{ medal: '🏆 ', title: 'Best Snapchat Discover Story', href: 'https://shortyawards.com/9th/nfl-snapchat-discover-themed-power-rankings', detail: 'Winner for NFL SNAPCHAT DISCOVER: THEMED POWER RANKINGS' }] }
-    ]},
-    { name: 'Hashtag Sports', groups: [
-      { year: '2021', items: [{ medal: '', title: 'Most Creative Engagement During the Sports Pause', href: 'https://www.hashtagsports.com/awards/shortlist-2021/tiktok-tailgate', detail: 'Finalist for TikTok Tailgate' }] },
-      { year: '2020', items: [
-        { medal: '🏆 ', title: 'Best Big Game Spot or Stunt', href: 'https://hashtagsports.com/awards/shortlist-2020/nfl-twitter-super-bowl-confetti', detail: 'Winner for #NFLTwitter Super Bowl Confetti 2020' },
-        { medal: '🏆 ', title: 'Most Creative Partnership Without An Athlete Or Influencer', href: 'https://hashtagsports.com/awards/shortlist-2020/nfl-twitter-super-bowl-confetti', detail: 'for #NFLTwitter Super Bowl Confetti 2020' },
-        { medal: '', title: 'Best Social Media Campaign', href: 'https://mobile.twitter.com/HashtagSports/status/1303783027097698304', detail: 'Finalist for #NFL100: A Year-Long Celebration' },
-        { medal: '', title: 'Best Original Content or Series', href: 'https://mobile.twitter.com/HashtagSports/status/1303748155624894464', detail: 'Finalist for NFL Draft Letters' },
-        { medal: '', title: 'Best Use of Technology', href: 'https://mobile.twitter.com/HashtagSports/status/1303776842495778817', detail: 'Finalist for NFL Super Bowl LIV Lens' },
-        { medal: '', title: 'Outstanding Use of Snapchat', href: 'https://mobile.twitter.com/HashtagSports/status/1303760161715228674', detail: 'Finalist for NFL Shows on Snapchat' }
-      ]},
-      { year: '2019', items: [
-        { medal: '🏆 ', title: 'Outstanding Use of Snapchat', href: 'https://awards.hashtagsports.com/shortlist-2019/nfl-highlights', detail: 'Winner for NFL Highlights - Snapchat Discover Story' },
-        { medal: '🏆 ', title: 'Outstanding Use of Instagram', href: 'https://awards.hashtagsports.com/shortlist-2019/nfl-throwback', detail: 'Winner for NFL Throwback' },
-        { medal: '', title: 'Best Real-Time Engagement', href: 'https://awards.hashtagsports.com/shortlist-2019/custom-fantasy-team-logos', detail: 'Finalist for Real-Time Custom Fantasy Team Logos' },
-        { medal: '', title: 'Best Social Media Campaign', href: 'https://awards.hashtagsports.com/shortlist-2019/brees-a-thon', detail: 'Finalist for Brees-A-Thon By The Checkdown' },
-        { medal: '', title: 'Best Multi-Platform Campaign', href: 'https://awards.hashtagsports.com/shortlist-2019/rookies-drawing-logos', detail: 'Finalist for Rookies Drawing Logos' }
-      ]}
-    ]}
-  ];
-
-  const projects = [
-    { title: 'NFL All Day Open Beta Launch', roles: ['Content Shoot PM', 'Community Marketing Lead'], tag: 'Campaign', cta: 'Watch the spot', href: 'https://twitter.com/NFLALLDAY/status/1560235359098781696' },
-    { title: 'NFL’s #ShowtimeCam', roles: ['DRI', 'Lead Producer'], tag: 'Production', cta: 'Learn more', href: 'https://twitter.com/NFL/status/1380651337566674946' },
-    { title: 'Twitter Confetti', roles: ['DRI', 'Lead Producer'], tag: 'Activation', cta: 'Learn more', href: 'https://www.gq.com/story/super-bowl-tweet-confetti-chiefs' },
-    { title: 'Top Shot’s First Access Unlocked Experience', roles: ['DRI', 'Experiential Marketing Lead'], tag: 'Experiential', cta: 'Learn more', href: 'https://blog.nbatopshot.com/posts/nba-finals-access-unlocked' },
-    { title: 'Rookies Drawing Logos', roles: ['DRI', 'Producer and Editor'], tag: 'Series', cta: 'Watch', href: 'https://www.youtube.com/watch?t=2s&v=NA_lwx2_31g' },
-    { title: 'NFL100 Campaign', roles: ['Social Marketing and Strategy Lead'], tag: 'Campaign', cta: 'Learn more', href: 'https://www.nflsociallab.com/nfl-100' },
-    { title: 'Launched NFL on TikTok', roles: ['DRI'], tag: 'Channel', cta: 'Learn more', href: 'https://www.nflsociallab.com/nfl-tiktok' },
-    { title: 'NFL All Day at SB LVI', roles: ['Community Marketing Lead'], tag: 'Activation', cta: 'Learn more', href: 'https://twitter.com/NFLALLDAY/status/1492205257287340034' },
-    { title: 'TikTok Tailgate', roles: ['DRI', 'Partnership Lead', 'Lead Producer'], tag: 'Partnership', cta: 'Learn more', href: 'https://www.hashtagsports.com/awards/shortlist-2021/tiktok-tailgate' },
-    { title: 'Draft-A-Thon Live', roles: ['DRI', 'Lead Producer'], tag: 'Livestream', cta: 'Learn more', href: 'https://nflcommunications.com/Pages/NFL-UNVEILS-PLANS-FOR-2020-DRAFT-A-THON-LIVE-STREAM.aspx' },
-    { title: 'Draft Letters', roles: ['DRI', 'Lead Producer'], tag: 'Series', cta: 'Learn more', href: 'https://www.nflsociallab.com/nfl-draft-letters' },
-    { title: 'Pro Bowl Guinness World Records', roles: ['DRI', 'Executive Producer'], tag: 'Production', cta: 'Watch', href: 'https://www.youtube.com/watch?v=g1SDdZxdv9o' },
-    { title: 'Commissioner Virtual Handshake', roles: ['DRI', 'Lead Producer'], tag: 'Moment', cta: 'Learn more', href: 'https://people.com/sports/nfl-draftee-jerry-jeudy-commissioner-roger-goodell-tiktok-video/' },
-    { title: 'Quavo Joins NBA Top Shot', roles: ['DRI', 'Athlete Partnerships Lead'], tag: 'Partnership', cta: 'Learn more', href: 'https://hypebeast.com/2021/7/quavo-nba-top-shot-finals-pack' },
-    { title: 'Charli D’Amelio x JLo at Super Bowl', roles: ['DRI'], tag: 'Moment', cta: 'Learn more', href: 'https://www.insider.com/charli-damelio-met-j-lo-exclusive-not-dating-lilhuddy-yet-2020-2' },
-    { title: 'NFL Player Giphy Reactions', roles: ['DRI', 'Lead Producer'], tag: 'Series', cta: 'Learn more', href: 'https://shortyawards.com/12th/nfls-official-giphy-account' },
-    { title: 'NFL Shows on Snapchat', roles: ['DRI', 'Executive Producer'], tag: 'Channel', cta: 'Learn more', href: 'https://shortyawards.com/12th/nfl-shows-on-snapchat' },
-    { title: 'NFL x Instagram Playmakers Program', roles: ['Social Lead'], tag: 'Program', cta: 'Learn more', href: 'https://www.si.com/nfl/2020/11/06/nfl-generation-z-fans-social-instagram' },
-    { title: 'Real Talk with the NFL Snapchat Show', roles: ['DRI', 'Executive Producer'], tag: 'Series', cta: 'Learn more', href: 'https://frontofficesports.com/real-talk-nfl-snapchat/' },
-    { title: 'NFL Draft Plinko', roles: ['DRI', 'Executive Producer'], tag: 'Production', cta: 'Learn more', href: 'https://nypost.com/2019/04/25/nfl-draft-plinko-knew-quinnen-williams-was-going-to-be-picked-by-jets/' }
-  ];
-
-  const press = [
-    { title: 'Dana White, Ronda Rousey Achieve 100M Milestone Hours Before UFC 317', desc: 'If Dana White wanted to draw attention to UFC 317, he chose the ideal accomplice—and no, not the fighters at Power Slap.', cta: 'Read', href: 'https://www.essentiallysports.com/ufc-mma-news-dana-white-ronda-rousey-achieve-hundred-million-milestone-hours-before-ufc-317/' },
-    { title: '‘More views than Taylor Swift’ — Footage of Power Slap star blowing kiss after eating hit breaks the internet', desc: 'Power Slap continues to rack up a ridiculous amount of social media views.', cta: 'Read', href: 'https://talksport.com/mma/1666102/taylor-swift-power-slap-kiss-footage-views/' },
-    { title: 'How the NFL Competes for—and Wins Over—Younger Fans’ Attention', desc: 'The league’s strategy includes transforming its players into influencers.', cta: 'Read', href: 'https://www.adweek.com/brand-marketing/how-the-nfl-competes-for-and-wins-over-younger-fans-attention/' },
-    { title: 'TikTok Dives Deeper Into Long-Form Sports Content', desc: 'Through live streams and content series, the social media platform has recently explored these efforts with sports brands like Jordan Brand and the NFL.', cta: 'Read', href: 'https://frontofficesports.com/tiktok-long-form-content/' },
-    { title: 'The NFL Doubles Down on its Snapchat Strategy as Other Media Partners Scale Back', desc: 'The NFL says its audience doubled viewership of its highlights video to 2 million this year.', cta: 'Read', href: 'https://adage.com/article/digital/nfl-future-snapchat/316026' },
-    { title: 'Sports Leagues Helping Fans Escape Through TikTok', desc: 'With few live sports events going on, the NBA, NFL, NHL, and MLB are each using TikTok to distract fans from their uncertain realities.', cta: 'Read', href: 'https://frontofficesports.com/big-four-sports-tiktok/' },
-    { title: 'Sports Brands Learning To Be Musically Creative On TikTok', desc: 'TikTok’s recent music regulations are forcing digital and social media workers in sports to be more creative with their content.', cta: 'Read', href: 'https://frntofficesport.com/tiktok-sports-original-music/' },
-    { title: 'How the NFL used TikTok to Build Authentic Fan Connections', desc: 'The pro football league is generating fan engagement on TikTok comments.', cta: 'Read', href: 'https://www.prweek.com/article/1705979/nfl-used-tiktok-build-authentic-fan-connections' },
-    { title: 'NFL Tackles Social Justice On “Real Talk” Snapchat Show', desc: 'NFL, Snapchat come together with launch of social justice show, “Real Talk.”', cta: 'Read', href: 'https://frontofficesports.com/real-talk-nfl-snapchat/' },
-    { title: 'KFC, American Eagle, and other household names break down how they built their TikTok followings', desc: 'The 42-minute recorded session broke down in detail why TikTok is the place to advertise — and included plenty of case studies on how to make it big on TikTok.', cta: 'Read', href: 'https://www.businessinsider.com/tiktok-pitch-deck-how-household-names-american-eagle-kfc-built-followings-2021-6' },
-    { title: 'How Ocean Spray, NFL embed nostalgia in TikToks to tap ‘culture-defining’ moments', desc: 'Panelists at SXSW detailed how to initiate a strong strategy, from mastering the platform’s nuances to understanding what drives its community to engage.', cta: 'Read', href: 'https://www.marketingdive.com/news/how-ocean-spray-nfl-embed-nostalgia-in-tiktoks-to-tap-culture-defining-m/596834/' },
-    { title: 'How Iconic Brands Use TikTok To Engage With Fans: SXSW 2021 Edition', desc: 'During this year’s SXSW Conference, there was one session that really stood out to me, and that was “Driving Culture Through Content.”', cta: 'Read', href: 'https://www.elicitmagazine.com/sxsw-2021-how-to-use-tiktok/' },
-    { title: 'How A TikTok Video Changed Arby’s Marketing, and Other Brand Stories from SXSW', desc: 'TikTok brings marketers from Arby’s, NFL, Ocean Spray, HBO Max, McDonald’s and Gatorade to virtual festival.', cta: 'Read', href: 'https://adage.com/article/special-report-sxsw/how-tiktok-video-changed-arbys-marketing-and-other-brand-stories-sxsw/2322151' },
-    { title: 'Bradley Grad Curry Part Of History Making Super Bowl For Women', desc: 'Flash forward seven years, AJ is the senior manager of social content for the NFL with five Super Bowl’s under her belt.', cta: 'Read', href: 'https://www.centralillinoisproud.com/sports/local-sports/bradley-grad-curry-part-of-history-making-super-bowl-for-women/' },
-    { title: 'Clubhouse and the NFL Team Up for the Draft', desc: 'It’s the audio platform’s first partnership with a sports league.', cta: 'Read', href: 'https://www.adweek.com/social-marketing/clubhouse-and-the-nfl-team-up-for-the-draft/' },
-    { title: 'For the First Time, a Woman Called the Shots at the Super Bowl', desc: 'NFL referee Sarah Thomas became the first woman to ever officiate a Super Bowl game.', cta: 'Read', href: 'https://thestoryexchange.org/nfl-sarah-thomas-first-female-referee-officiate-super-bowl-lv/' },
-    { title: 'Driving Culture Through Content | SXSW 2021', desc: 'Learn how brands are navigating TikTok’s participatory nature to seize their own cultural moments and connect with an engaged community in an authentic way.', cta: 'Watch', href: 'https://www.youtube.com/watch?v=N9ZBtIJ1JJA' },
-    { title: 'Ballerz Nation #3: AJ Curry of NFL All Day', desc: 'NFL All Day Community Lead, AJ Curry, steps up to quarterback the Guest spot in episode #3 of Ballerz Nation.', cta: 'Watch', href: 'https://www.youtube.com/watch?v=zvs3mnVwStc' },
-    { title: '“It starts with us. It starts with our allies. It starts with our leadership.”', desc: 'Colleen Wolfe, Aisha Chaney, AJ Curry, and Stacey Dales on creating environments in sports where women are supported and heard.', cta: 'Watch', href: 'https://www.facebook.com/watch/?v=3486138221410380' },
-    { title: '“I want there to be more of me. I’m tired of being the only one.”', desc: 'Colleen Wolfe, Aisha Chaney, AJ Curry, and Stacey Dales discuss the many obstacles of being a woman in a male-dominated sports industry.', cta: 'Watch', href: 'https://www.facebook.com/watch/?v=1575909595907735' },
-    { title: '“If you see something wrong, speak up. Say something.”', desc: 'Colleen Wolfe, Aisha Chaney, AJ Curry, and Stacey Dales discuss the importance of allies and how we can better support women in the workplace.', cta: 'Watch', href: 'https://www.facebook.com/watch/?v=604698030448346' }
-  ];
-
-  const panelists = [
-    { event: 'AdWeek’s “BrandWeek Sports”', date: 'Nov 2020' },
-    { event: 'SXSW’s “Driving Culture Through Content”', date: 'May 2021' },
-    { event: 'Twitter’s “2020 Sports Summit”', date: 'June 2020' },
-    { event: 'TikTok’s “Future of Sports Entertainment”', date: 'Sep 2019' },
-    { event: 'Michigan Sport Business Conference', date: 'Oct 2020' }
-  ];
-
-  /* ============================ RENDER ============================ */
-
-  // ---- Highlights — icon accordion ----
-  const hlGrid = document.getElementById('hl-grid');
-  highlights.forEach((h) => {
-    const copy = el('p', { class: 'hl-tile-copy' });
-    h.segs.forEach((s) => copy.appendChild(s.em ? el('em', { text: s.t }) : document.createTextNode(s.t)));
-    const face = el('span', { class: 'hl-tile-face' }, [
-      el('span', { class: 'hl-tile-num', text: h.n }),
-      el('span', { class: 'hl-tile-icon', html: ICONS[h.icon] || ICONS.star })
-    ]);
-    const tile = el('div', {
-      class: 'hl-tile', tabindex: '0', role: 'group', 'aria-label': copy.textContent
-    }, [face, el('div', { class: 'hl-tile-text' }, copy)]);
-    hlGrid.appendChild(tile);
-  });
-
-  // ---- Accordion factory ----
+  /* ---------- accordion factory (Career + Awards) ---------- */
   const makeAccItem = (openByDefault, btnContent, panelContent) => {
     const sign = el('span', { class: 'acc-sign', 'aria-hidden': 'true', text: openByDefault ? '–' : '+' });
     const btn = el('button', { class: 'acc-btn', type: 'button', 'aria-expanded': String(openByDefault) }, btnContent(sign));
@@ -222,233 +84,460 @@
     return item;
   };
 
-  // ---- Career ----
-  const careerAcc = document.getElementById('career-acc');
-  roles.forEach((r, i) => {
-    careerAcc.appendChild(makeAccItem(
-      i === 0,
-      (sign) => {
-        const btn = el('div', { class: 'role-btn' }, [
+  /* ============================ SECTION RENDERERS ============================ */
+
+  const sectionHead = (num, title) => el('div', { class: 'section-head reveal' }, [
+    num != null ? el('span', { class: 'section-num', text: num }) : null,
+    el('h2', { class: 'section-title', text: title || '' })
+  ].filter(Boolean));
+
+  const renderHighlights = (b, num) => {
+    const grid = el('div', { class: 'hl-accordion reveal card', id: 'hl-grid' });
+    (b.items || []).forEach((h, i) => {
+      const copy = el('p', { class: 'hl-tile-copy' }, mdBold(h.text, 'em'));
+      const face = el('span', { class: 'hl-tile-face' }, [
+        el('span', { class: 'hl-tile-num', text: pad2(i + 1) }),
+        el('span', { class: 'hl-tile-icon', html: ICONS[h.icon] || ICONS.star })
+      ]);
+      grid.appendChild(el('div', {
+        class: 'hl-tile', tabindex: '0', role: 'group', 'aria-label': stripBold(h.text)
+      }, [face, el('div', { class: 'hl-tile-text' }, copy)]));
+    });
+    return el('section', { class: 'section', id: 'highlights' }, [sectionHead(num, b.title), grid]);
+  };
+
+  const qspreadPhoto = (b) => el('div', { class: 'qspread-photo' },
+    el('div', { class: 'px-layer js-parallax', 'data-speed': '0.07' },
+      el('img', {
+        class: 'qspread-img', src: assetUrl(b.image), alt: b.imageAlt || '',
+        loading: 'lazy', style: b.imagePosition ? 'object-position:' + b.imagePosition : null
+      })
+    )
+  );
+
+  const renderQuote = (b) => {
+    const fig = el('figure', { class: 'qspread-text reveal' }, [
+      el('span', { class: 'quote-mark', 'aria-hidden': 'true', text: '“' }),
+      el('blockquote', { class: 'quote-body', text: b.quote || '' }),
+      b.citation ? el('figcaption', { class: 'quote-cite', text: '— ' + b.citation }) : null
+    ].filter(Boolean));
+    return el('section', { class: 'qspread' + (b.side === 'right' ? ' alt' : '') }, [
+      qspreadPhoto(b),
+      el('div', { class: 'qspread-scrim', 'aria-hidden': 'true' }),
+      el('div', { class: 'qspread-inner' }, fig)
+    ]);
+  };
+
+  const renderDivider = (b) => {
+    const wrap = el('div', { class: 'qspread-text reveal' }, el('p', { class: 'qspread-pull', text: b.headline || '' }));
+    return el('section', { class: 'qspread' + (b.side === 'right' ? ' alt' : '') + ' qdivider' }, [
+      qspreadPhoto(b),
+      el('div', { class: 'qspread-scrim', 'aria-hidden': 'true' }),
+      el('div', { class: 'qspread-inner' }, wrap)
+    ]);
+  };
+
+  const renderCareer = (b, num) => {
+    const acc = el('div', { class: 'acc reveal card', id: 'career-acc' });
+    (b.roles || []).forEach((r, i) => {
+      acc.appendChild(makeAccItem(
+        i === 0,
+        (sign) => el('div', { class: 'role-btn' }, [
           el('span', { class: 'role-dates', text: r.dates }),
           el('span', null, [
             el('span', { class: 'role-title', text: r.title }),
             el('span', { class: 'role-org', text: r.org })
           ]),
           sign
-        ]);
-        return btn;
-      },
-      el('p', { class: 'role-desc', text: r.desc })
-    ));
-  });
-  // role-btn must be the button's grid; flatten one wrapper level
-  // (makeAccItem appends btnContent as the button's children)
+        ]),
+        el('p', { class: 'role-desc', text: r.desc })
+      ));
+    });
+    const kids = [sectionHead(num, b.title), acc];
+    if (b.resumeUrl) {
+      kids.push(el('a', {
+        class: 'resume-link reveal', href: b.resumeUrl, target: '_blank', rel: 'noopener'
+      }, [document.createTextNode((b.resumeLabel || 'View full résumé') + ' '), el('span', { 'aria-hidden': 'true', text: '→' })]));
+    }
+    return el('section', { class: 'section', id: 'career' }, kids);
+  };
 
-  // ---- Awards ----
-  const awardsAcc = document.getElementById('awards-acc');
-  awards.forEach((o, i) => {
-    const count = o.groups.reduce((n, g) => n + g.items.length, 0);
-    const groupsWrap = el('div', { class: 'award-groups' });
-    o.groups.forEach((g) => {
-      const items = el('div', { class: 'award-items' });
-      g.items.forEach((it) => {
-        const row = el('div', { class: 'award-item' }, [
-          el('span', { class: 'award-medal', text: it.medal }),
-          el('a', { class: 'award-link', href: it.href, target: '_blank', rel: 'noopener', text: it.title }),
-          document.createTextNode(' — ' + it.detail)
-        ]);
-        items.appendChild(row);
+  const renderAwards = (b, num) => {
+    const acc = el('div', { class: 'acc reveal card', id: 'awards-acc' });
+    (b.orgs || []).forEach((o, i) => {
+      const count = (o.groups || []).reduce((n, g) => n + (g.items ? g.items.length : 0), 0);
+      const groupsWrap = el('div', { class: 'award-groups' });
+      (o.groups || []).forEach((g) => {
+        const items = el('div', { class: 'award-items' });
+        (g.items || []).forEach((it) => {
+          items.appendChild(el('div', { class: 'award-item' }, [
+            el('span', { class: 'award-medal', text: it.medal ? it.medal + ' ' : '' }),
+            el('a', { class: 'award-link', href: it.href, target: '_blank', rel: 'noopener', text: it.title }),
+            document.createTextNode(' — ' + it.detail)
+          ]));
+        });
+        groupsWrap.appendChild(el('div', { class: 'award-group' }, [
+          el('div', { class: 'award-year', text: g.year }), items
+        ]));
       });
-      groupsWrap.appendChild(el('div', { class: 'award-group' }, [
-        el('div', { class: 'award-year', text: g.year }),
-        items
+      acc.appendChild(makeAccItem(
+        i === 0,
+        (sign) => el('div', { class: 'award-btn' }, [
+          el('span', { class: 'award-head' }, [
+            el('span', { class: 'award-name', text: o.name }),
+            el('span', { class: 'award-tally', text: count + ' honors' })
+          ]),
+          sign
+        ]),
+        groupsWrap
+      ));
+    });
+    return el('section', { class: 'section', id: 'awards' }, [sectionHead(num, b.title), acc]);
+  };
+
+  const renderProjects = (b, num) => {
+    const rail = el('div', { class: 'rail', id: 'proj-rail' });
+    (b.items || []).forEach((p) => {
+      const rolesWrap = el('div', { class: 'proj-roles' },
+        (p.roles || []).map((role) => el('span', { class: 'proj-role', text: role })));
+      rail.appendChild(el('article', { class: 'proj' }, [
+        el('a', { class: 'proj-media', href: p.href, target: '_blank', rel: 'noopener' },
+          el('div', { class: 'proj-img' }, [
+            el('span', { class: 'proj-tag', text: p.tag }),
+            el('span', { class: 'proj-badge', 'aria-hidden': 'true', text: '↗' })
+          ])),
+        el('h3', { class: 'proj-title', text: p.title }),
+        rolesWrap,
+        el('a', { class: 'proj-cta', href: p.href, target: '_blank', rel: 'noopener', text: p.cta })
       ]));
     });
-    awardsAcc.appendChild(makeAccItem(
-      i === 0,
-      (sign) => el('div', { class: 'award-btn' }, [
-        el('span', { class: 'award-head' }, [
-          el('span', { class: 'award-name', text: o.name }),
-          el('span', { class: 'award-tally', text: count + ' honors' })
-        ]),
-        sign
-      ]),
-      groupsWrap
-    ));
-  });
+    const head = el('div', { class: 'rail-head reveal' }, [
+      el('div', { class: 'section-head', style: 'margin:0;' }, [
+        num != null ? el('span', { class: 'section-num', text: num }) : null,
+        el('h2', { class: 'section-title', text: b.title || '' })
+      ].filter(Boolean)),
+      el('div', { class: 'rail-nav' }, [
+        el('span', { class: 'rail-hint', text: b.hint || 'Drag to explore' }),
+        el('div', { class: 'rail-btns' }, [
+          el('button', { class: 'rail-btn', id: 'proj-prev', 'aria-label': 'Previous projects', text: '←' }),
+          el('button', { class: 'rail-btn', id: 'proj-next', 'aria-label': 'Next projects', text: '→' })
+        ])
+      ])
+    ]);
+    return el('section', { class: 'section', id: 'projects' }, [head, rail]);
+  };
 
-  // ---- Projects ----
-  const rail = document.getElementById('proj-rail');
-  projects.forEach((p) => {
-    const rolesWrap = el('div', { class: 'proj-roles' },
-      p.roles.map((role) => el('span', { class: 'proj-role', text: role })));
-    rail.appendChild(el('article', { class: 'proj' }, [
-      el('a', { class: 'proj-media', href: p.href, target: '_blank', rel: 'noopener' },
-        el('div', { class: 'proj-img' }, [
-          el('span', { class: 'proj-tag', text: p.tag }),
-          el('span', { class: 'proj-badge', 'aria-hidden': 'true', text: '↗' })
-        ])),
-      el('h3', { class: 'proj-title', text: p.title }),
-      rolesWrap,
-      el('a', { class: 'proj-cta', href: p.href, target: '_blank', rel: 'noopener', text: p.cta })
-    ]));
-  });
-
-  // ---- Press ----
   const PRESS_VISIBLE = 6;
-  const pressGrid = document.getElementById('press-grid');
-  const pressToggle = document.getElementById('press-toggle');
-  press.forEach((a, i) => {
-    pressGrid.appendChild(el('a', {
-      class: 'press-card' + (i >= PRESS_VISIBLE ? ' hidden' : ''),
-      href: a.href, target: '_blank', rel: 'noopener'
-    }, [
-      el('span', { class: 'press-cta', text: a.cta }),
-      el('h3', { class: 'press-title', text: a.title }),
-      el('p', { class: 'press-desc', text: a.desc })
-    ]));
-  });
-  let pressOpen = false;
-  const setPressLabel = () => {
-    pressToggle.textContent = pressOpen ? 'Show less' : ('Show all ' + press.length + ' features');
-  };
-  setPressLabel();
-  pressToggle.addEventListener('click', () => {
-    pressOpen = !pressOpen;
-    pressGrid.querySelectorAll('.press-card').forEach((c, i) => {
-      if (i >= PRESS_VISIBLE) c.classList.toggle('hidden', !pressOpen);
+  const renderPress = (b, num) => {
+    const grid = el('div', { class: 'press-grid reveal card', id: 'press-grid' });
+    (b.items || []).forEach((a, i) => {
+      grid.appendChild(el('a', {
+        class: 'press-card' + (i >= PRESS_VISIBLE ? ' hidden' : ''),
+        href: a.href, target: '_blank', rel: 'noopener'
+      }, [
+        el('span', { class: 'press-cta', text: a.cta }),
+        el('h3', { class: 'press-title', text: a.title }),
+        el('p', { class: 'press-desc', text: a.desc })
+      ]));
     });
-    setPressLabel();
-  });
-
-  // ---- Panelists ----
-  const panelGrid = document.getElementById('panelist-grid');
-  panelists.forEach((pn) => {
-    panelGrid.appendChild(el('div', { class: 'panelist' }, [
-      el('span', { class: 'panelist-event', text: pn.event }),
-      el('span', { class: 'panelist-date', text: pn.date })
-    ]));
-  });
-
-  // ---- Split section titles into characters (staggered reveal) ----
-  document.querySelectorAll('.section-title').forEach((title) => {
-    const text = title.textContent;
-    title.textContent = '';
-    let i = 0;
-    Array.from(text).forEach((ch) => {
-      if (ch === ' ') { title.appendChild(document.createTextNode(' ')); return; }
-      const span = document.createElement('span');
-      span.className = 'ch';
-      span.textContent = ch;
-      span.style.setProperty('--i', i++);
-      title.appendChild(span);
-    });
-  });
-
-  /* ========================= INTERACTIONS ========================= */
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // ---- Reveal on scroll (progressive enhancement + robust fallback) ----
-  // `.reveal` is visible by default; it is only hidden for the entrance
-  // animation once `js-anim` is on <html>. So if scripts are blocked the
-  // content still shows.
-  const root = document.documentElement;
-  if ('IntersectionObserver' in window && !reduceMotion) {
-    root.classList.add('js-anim');
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    const toggle = el('button', { class: 'press-toggle', id: 'press-toggle' });
+    const kids = [
+      sectionHead(num, b.title),
+      grid,
+      el('div', { class: 'press-toggle-wrap' }, toggle)
+    ];
+    if (b.panelists && b.panelists.length) {
+      const pg = el('div', { class: 'panelist-grid reveal card', id: 'panelist-grid' });
+      b.panelists.forEach((pn) => {
+        pg.appendChild(el('div', { class: 'panelist' }, [
+          el('span', { class: 'panelist-event', text: pn.event }),
+          el('span', { class: 'panelist-date', text: pn.date })
+        ]));
       });
-    }, { rootMargin: '0px 0px -8% 0px', threshold: 0 });
-    document.querySelectorAll('.reveal').forEach((n) => io.observe(n));
-    // Some embedded / occluded preview frames never advance CSS transitions,
-    // so a `.reveal` element freezes at its hidden start value (opacity:0) and
-    // the page reads as blank. After the entrance should have finished, if the
-    // in-view hero is still not visible, abandon the animation: dropping
-    // `js-anim` reverts every `.reveal` to its natural, fully-visible state
-    // with no transition left to freeze. (setTimeout still fires in
-    // backgrounded tabs, where rAF/transitions may not.)
-    setTimeout(() => {
-      const probe = document.querySelector('.hero .reveal');
-      if (!probe || parseFloat(getComputedStyle(probe).opacity) < 0.9) {
-        root.classList.remove('js-anim');
-      }
-    }, 1500);
-  }
-  // else (no IntersectionObserver / reduced motion): `js-anim` is never set,
-  // so all content stays visible.
-
-  // ---- Nav: shadow, link reveal, active section ----
-  const nav = document.getElementById('nav');
-  const navLinks = Array.from(document.querySelectorAll('.navlink'));
-  const sectionIds = ['highlights', 'career', 'awards', 'projects', 'press'];
-
-  const onScrollNav = () => {
-    const y = window.pageYOffset;
-    nav.classList.toggle('scrolled', y > 16);
-    nav.classList.toggle('show-links', y > window.innerHeight * 0.55);
-
-    const mid = window.innerHeight * 0.35;
-    let current = '';
-    sectionIds.forEach((id) => {
-      const sec = document.getElementById(id);
-      if (sec && sec.getBoundingClientRect().top <= mid) current = id;
-    });
-    navLinks.forEach((l) => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+      kids.push(el('h3', { class: 'panelist-head reveal', text: b.panelistTitle || 'Featured Panelist' }));
+      kids.push(pg);
+    }
+    return el('section', { class: 'section', id: 'press' }, kids);
   };
 
-  // ---- Parallax: drift each portrait photo within its frame ----
-  const pxEls = Array.from(document.querySelectorAll('.js-parallax'));
-  const parallax = () => {
-    if (reduceMotion) return;
-    pxEls.forEach((elx) => {
-      const frame = elx.parentElement; // .qspread-photo
-      if (!frame) return;
-      const r = frame.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > window.innerHeight) return;
-      const center = r.top + r.height / 2 - window.innerHeight / 2;
-      const speed = parseFloat(elx.getAttribute('data-speed')) || 0.1;
-      elx.style.transform = 'translateY(' + (-center * speed).toFixed(1) + 'px)';
-    });
+  const RENDERERS = {
+    highlights: renderHighlights,
+    quote: renderQuote,
+    divider: renderDivider,
+    career: renderCareer,
+    awards: renderAwards,
+    projects: renderProjects,
+    press: renderPress
+  };
+  const PRIMARY = { highlights: 1, career: 1, awards: 1, projects: 1, press: 1 };
+
+  /* ---------- chrome: nav, hero, footer ---------- */
+  const renderNav = (nav, navItems) => {
+    const navEl = document.getElementById('nav');
+    const right = el('div', { class: 'nav-right' });
+    navItems.forEach((it) => right.appendChild(
+      el('a', { class: 'navlink', href: '#' + it.id, text: it.label })));
+    if (nav && nav.resumeUrl) {
+      right.appendChild(el('a', {
+        class: 'nav-cta', href: nav.resumeUrl, target: '_blank', rel: 'noopener',
+        text: (nav && nav.resumeLabel) || 'Resume'
+      }));
+    }
+    navEl.appendChild(el('a', { href: '#overview', class: 'nav-logo', text: (nav && nav.logo) || 'AJ Curry' }));
+    navEl.appendChild(right);
   };
 
-  // ---- rAF-throttled scroll loop ----
-  let ticking = false;
-  const onScroll = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { onScrollNav(); parallax(); ticking = false; });
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', () => { onScrollNav(); parallax(); }, { passive: true });
-  onScrollNav();
-  parallax();
-
-  // ---- Projects rail: drag-to-scroll + prev/next ----
-  const track = document.getElementById('proj-rail');
-  if (track) {
-    let down = false, sx = 0, sl = 0, moved = false;
-    track.addEventListener('pointerdown', (e) => { down = true; moved = false; sx = e.clientX; sl = track.scrollLeft; });
-    track.addEventListener('pointermove', (e) => {
-      if (!down) return;
-      const dx = e.clientX - sx;
-      if (Math.abs(dx) > 4) { moved = true; track.style.cursor = 'grabbing'; }
-      track.scrollLeft = sl - dx;
+  const renderHero = (hero, firstSectionId) => {
+    const img = el('img', { src: assetUrl(hero.image), alt: hero.imageAlt || '' });
+    if (hero.imagePosition) img.style.setProperty('--hero-pos', hero.imagePosition);
+    const social = el('nav', { class: 'hero-social', 'aria-label': 'Social media' },
+      [el('span', { class: 'hero-social-label', 'aria-hidden': 'true', text: 'Follow' })]);
+    (hero.social || []).forEach((s) => {
+      const def = SOCIAL[(s.platform || '').toLowerCase()];
+      if (!def || !s.url) return;
+      social.appendChild(el('a', {
+        class: 'hero-social-link', href: s.url, target: '_blank', rel: 'noopener',
+        'aria-label': def.label, html: def.svg
+      }));
     });
-    const up = () => { down = false; track.style.cursor = 'grab'; };
-    track.addEventListener('pointerup', up);
-    track.addEventListener('pointerleave', up);
-    track.addEventListener('pointercancel', up);
-    // Suppress the click that follows a drag so cards don't navigate mid-drag.
-    track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+    return el('header', { class: 'hero', id: 'overview' }, [
+      el('div', { class: 'hero-photo' }, [img, el('div', { class: 'hero-veil', 'aria-hidden': 'true' })]),
+      el('div', { class: 'hero-content' }, [
+        el('div', { class: 'eyebrow reveal' }, [
+          el('span', { class: 'eyebrow-dot', 'aria-hidden': 'true' }),
+          el('span', { class: 'eyebrow-text', text: hero.eyebrow || '' })
+        ]),
+        el('h1', { class: 'hero-title reveal', text: hero.name || '' }),
+        el('p', { class: 'hero-intro reveal' }, mdBold(hero.intro, 'b'))
+      ]),
+      social,
+      el('a', { href: '#' + (firstSectionId || 'highlights'), class: 'scroll-cue', 'aria-label': 'Scroll down' },
+        [document.createTextNode('Scroll'), el('span', { class: 'line', 'aria-hidden': 'true' })])
+    ]);
+  };
 
-    const scrollProjects = (dir) => {
-      const card = track.querySelector('.proj');
-      const gap = parseFloat(getComputedStyle(track).columnGap) || 24;
-      const w = card ? card.getBoundingClientRect().width + gap : 340;
-      track.scrollBy({ left: dir * w * 1.5, behavior: 'smooth' });
+  const renderFooter = (f) => {
+    const footEl = document.getElementById('footer');
+    const social = el('div', { class: 'footer-social' });
+    (f.social || []).forEach((s) => social.appendChild(
+      el('a', { href: s.url, target: '_blank', rel: 'noopener', text: s.label })));
+    footEl.appendChild(el('div', { class: 'footer-inner' }, [
+      el('div', { class: 'footer-top' }, [
+        el('div', null, [
+          el('p', { class: 'footer-kicker', text: f.kicker || '' }),
+          el('a', { href: '#overview', class: 'footer-name', text: f.name || 'AJ Curry' })
+        ]),
+        social
+      ]),
+      el('div', { class: 'footer-bottom' }, [
+        el('span', { class: 'footer-copy', text: f.copyright || '' }),
+        el('a', { href: '#overview', class: 'footer-top-link' },
+          [document.createTextNode('Back to top '), el('span', { 'aria-hidden': 'true', text: '↑' })])
+      ])
+    ]));
+  };
+
+  /* ============================== BUILD ============================== */
+  const build = (data) => {
+    const page = document.getElementById('page');
+
+    // Pre-pass: number the primary sections and collect nav items (so reordering
+    // renumbers and the nav always follows the section order).
+    const nums = [];
+    const navItems = [];
+    let count = 0;
+    (data.sections || []).forEach((b, i) => {
+      if (PRIMARY[b.type]) { count++; nums[i] = pad2(count); navItems.push({ id: b.type, label: b.navLabel || b.title || b.type }); }
+      else nums[i] = null;
+    });
+    const firstSectionId = navItems.length ? navItems[0].id : 'highlights';
+
+    renderNav(data.nav || {}, navItems);
+    page.appendChild(renderHero(data.hero || {}, firstSectionId));
+    (data.sections || []).forEach((b, i) => {
+      const fn = RENDERERS[b.type];
+      if (fn) page.appendChild(fn(b, nums[i]));
+    });
+    renderFooter(data.footer || {});
+  };
+
+  /* ============================ INTERACTIONS ============================ */
+  const initInteractions = (navItems) => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const root = document.documentElement;
+
+    // Split section titles into characters for the staggered reveal.
+    document.querySelectorAll('.section-title').forEach((title) => {
+      const text = title.textContent;
+      title.textContent = '';
+      let i = 0;
+      Array.from(text).forEach((ch) => {
+        if (ch === ' ') { title.appendChild(document.createTextNode(' ')); return; }
+        const span = document.createElement('span');
+        span.className = 'ch';
+        span.textContent = ch;
+        span.style.setProperty('--i', i++);
+        title.appendChild(span);
+      });
+    });
+
+    // Reveal on scroll (progressive enhancement + robust fallback).
+    if ('IntersectionObserver' in window && !reduceMotion) {
+      root.classList.add('js-anim');
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { rootMargin: '0px 0px -8% 0px', threshold: 0 });
+      document.querySelectorAll('.reveal').forEach((n) => io.observe(n));
+      setTimeout(() => {
+        const probe = document.querySelector('.hero .reveal');
+        if (!probe || parseFloat(getComputedStyle(probe).opacity) < 0.9) {
+          root.classList.remove('js-anim');
+        }
+      }, 1500);
+    }
+
+    // Nav: shadow, link reveal, active section.
+    const nav = document.getElementById('nav');
+    const navLinks = Array.from(document.querySelectorAll('.navlink'));
+    const sectionIds = navItems.map((n) => n.id);
+    const onScrollNav = () => {
+      const y = window.pageYOffset;
+      nav.classList.toggle('scrolled', y > 16);
+      nav.classList.toggle('show-links', y > window.innerHeight * 0.55);
+      const mid = window.innerHeight * 0.35;
+      let current = '';
+      sectionIds.forEach((id) => {
+        const sec = document.getElementById(id);
+        if (sec && sec.getBoundingClientRect().top <= mid) current = id;
+      });
+      navLinks.forEach((l) => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
     };
-    document.getElementById('proj-prev').addEventListener('click', () => scrollProjects(-1));
-    document.getElementById('proj-next').addEventListener('click', () => scrollProjects(1));
-  }
+
+    // Parallax: drift each portrait photo within its frame.
+    const pxEls = Array.from(document.querySelectorAll('.js-parallax'));
+    const parallax = () => {
+      if (reduceMotion) return;
+      pxEls.forEach((elx) => {
+        const frame = elx.parentElement;
+        if (!frame) return;
+        const r = frame.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) return;
+        const center = r.top + r.height / 2 - window.innerHeight / 2;
+        const speed = parseFloat(elx.getAttribute('data-speed')) || 0.1;
+        elx.style.transform = 'translateY(' + (-center * speed).toFixed(1) + 'px)';
+      });
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { onScrollNav(); parallax(); ticking = false; });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => { onScrollNav(); parallax(); }, { passive: true });
+    onScrollNav();
+    parallax();
+
+    // Press: show all / show less.
+    const pressGrid = document.getElementById('press-grid');
+    const pressToggle = document.getElementById('press-toggle');
+    if (pressGrid && pressToggle) {
+      const total = pressGrid.querySelectorAll('.press-card').length;
+      let pressOpen = false;
+      const setLabel = () => { pressToggle.textContent = pressOpen ? 'Show less' : ('Show all ' + total + ' features'); };
+      setLabel();
+      pressToggle.addEventListener('click', () => {
+        pressOpen = !pressOpen;
+        pressGrid.querySelectorAll('.press-card').forEach((c, i) => {
+          if (i >= PRESS_VISIBLE) c.classList.toggle('hidden', !pressOpen);
+        });
+        setLabel();
+      });
+    }
+
+    // Projects rail: drag-to-scroll + prev/next.
+    const track = document.getElementById('proj-rail');
+    if (track) {
+      let down = false, sx = 0, sl = 0, moved = false;
+      track.addEventListener('pointerdown', (e) => { down = true; moved = false; sx = e.clientX; sl = track.scrollLeft; });
+      track.addEventListener('pointermove', (e) => {
+        if (!down) return;
+        const dx = e.clientX - sx;
+        if (Math.abs(dx) > 4) { moved = true; track.style.cursor = 'grabbing'; }
+        track.scrollLeft = sl - dx;
+      });
+      const up = () => { down = false; track.style.cursor = 'grab'; };
+      track.addEventListener('pointerup', up);
+      track.addEventListener('pointerleave', up);
+      track.addEventListener('pointercancel', up);
+      track.addEventListener('click', (e) => { if (moved) { e.preventDefault(); e.stopPropagation(); } }, true);
+      const scrollProjects = (dir) => {
+        const card = track.querySelector('.proj');
+        const gap = parseFloat(getComputedStyle(track).columnGap) || 24;
+        const w = card ? card.getBoundingClientRect().width + gap : 340;
+        track.scrollBy({ left: dir * w * 1.5, behavior: 'smooth' });
+      };
+      const prev = document.getElementById('proj-prev');
+      const next = document.getElementById('proj-next');
+      if (prev) prev.addEventListener('click', () => scrollProjects(-1));
+      if (next) next.addEventListener('click', () => scrollProjects(1));
+    }
+  };
+
+  /* ---------- smooth scroll (Lenis) + anchor binding ---------- */
+  const initSmoothScroll = () => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const navH = () => { const n = document.getElementById('nav'); return n ? n.offsetHeight : 80; };
+    const bindAnchors = (scrollTo) => {
+      document.querySelectorAll('a[href^="#"]').forEach((a) => {
+        a.addEventListener('click', (e) => {
+          const id = a.getAttribute('href');
+          if (!id || id.length < 2) return;
+          const t = document.querySelector(id);
+          if (!t) return;
+          e.preventDefault();
+          scrollTo(t);
+          if (history.pushState) history.pushState(null, '', id);
+        });
+      });
+    };
+    if (reduce || typeof Lenis === 'undefined') {
+      bindAnchors((t) => t.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+      return;
+    }
+    const lenis = new Lenis({
+      duration: 1.05,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true
+    });
+    const raf = (time) => { lenis.raf(time); requestAnimationFrame(raf); };
+    requestAnimationFrame(raf);
+    bindAnchors((t) => lenis.scrollTo(t, { offset: -(navH() + 4), duration: 1.2 }));
+    window.__lenis = lenis;
+  };
+
+  /* ============================== BOOT ============================== */
+  fetch('data/content.json', { cache: 'no-cache' })
+    .then((r) => { if (!r.ok) throw new Error('content.json ' + r.status); return r.json(); })
+    .then((data) => {
+      build(data);
+      const navItems = (data.sections || [])
+        .filter((b) => PRIMARY[b.type])
+        .map((b) => ({ id: b.type, label: b.navLabel || b.title || b.type }));
+      initInteractions(navItems);
+      initSmoothScroll();
+    })
+    .catch((err) => {
+      console.error('Failed to load site content:', err);
+      const page = document.getElementById('page');
+      if (page && !page.children.length) {
+        page.appendChild(el('div', {
+          style: 'max-width:640px;margin:22vh auto;padding:0 24px;font-family:Georgia,serif;color:#15171C;text-align:center;',
+          html: '<p style="font-size:28px;line-height:1.3;">AJ Curry</p><p style="font-size:15px;color:#5A5E66;margin-top:12px;">Content is loading. If this message stays, please refresh.</p>'
+        }));
+      }
+    });
 })();
