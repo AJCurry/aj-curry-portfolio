@@ -2,7 +2,7 @@
   "nav": {
     "logo": "AJ Curry",
     "resumeLabel": "Resume",
-    "resumeUrl": "https://www.ajcurry.com/resume"
+    "resumeUrl": ""
   },
   "hero": {
     "eyebrow": "Emmy Award-Winning Marketing Executive",
@@ -58,7 +58,7 @@
       "type": "career",
       "title": "Career",
       "resumeLabel": "View full résumé",
-      "resumeUrl": "https://www.ajcurry.com/resume",
+      "resumeUrl": "",
       "roles": [
         { "dates": "Jan 2025 — Present", "title": "Vice President, Social Content", "org": "Fiume Capital", "desc": "Elevated to Vice President with a key focus on Thrill Sports and its properties, Power Slap, Nitro Circus, and Street League Skateboarding, overseeing the marketing, social, and content teams." },
         { "dates": "Apr 2023 — Jan 2025", "title": "Sr Director, Social Content Strategy", "org": "Fiume Capital", "desc": "Served as the lead social, marketing, influencer, and content operating partner for the entire Fiume Capital portfolio." },
