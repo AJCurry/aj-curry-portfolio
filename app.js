@@ -197,15 +197,17 @@
 
   const renderProjects = (b, num) => {
     const rail = el('div', { class: 'rail', id: 'proj-rail' });
-    (b.items || []).forEach((p) => {
+    (b.items || []).forEach((p, i) => {
       const rolesWrap = el('div', { class: 'proj-roles' },
         (p.roles || []).map((role) => el('span', { class: 'proj-role', text: role })));
-      rail.appendChild(el('article', { class: 'proj' }, [
+      const media = [];
+      if (p.image) media.push(el('img', { class: 'proj-photo', src: assetUrl(p.image), alt: p.title || '', loading: 'lazy' }));
+      else media.push(el('span', { class: 'proj-num', 'aria-hidden': 'true', text: pad2(i + 1) }));
+      if (p.tag) media.push(el('span', { class: 'proj-tag', text: p.tag }));
+      media.push(el('span', { class: 'proj-badge', 'aria-hidden': 'true', text: '↗' }));
+      rail.appendChild(el('article', { class: 'proj' + (p.image ? ' has-photo' : '') }, [
         el('a', { class: 'proj-media', href: p.href, target: '_blank', rel: 'noopener' },
-          el('div', { class: 'proj-img' }, [
-            el('span', { class: 'proj-tag', text: p.tag }),
-            el('span', { class: 'proj-badge', 'aria-hidden': 'true', text: '↗' })
-          ])),
+          el('div', { class: 'proj-img' }, media)),
         el('h3', { class: 'proj-title', text: p.title }),
         rolesWrap,
         el('a', { class: 'proj-cta', href: p.href, target: '_blank', rel: 'noopener', text: p.cta })
@@ -430,16 +432,27 @@
       });
     };
 
+    // Scroll progress bar (hairline at the top edge).
+    const progressBar = document.getElementById('scroll-progress');
+    const updateProgress = () => {
+      if (!progressBar) return;
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const p = max > 0 ? Math.min(1, Math.max(0, window.pageYOffset / max)) : 0;
+      progressBar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+    };
+
     let ticking = false;
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(() => { onScrollNav(); parallax(); ticking = false; });
+      requestAnimationFrame(() => { onScrollNav(); parallax(); updateProgress(); ticking = false; });
     };
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { onScrollNav(); parallax(); }, { passive: true });
+    window.addEventListener('resize', () => { onScrollNav(); parallax(); updateProgress(); }, { passive: true });
     onScrollNav();
     parallax();
+    updateProgress();
 
     // Press: show all / show less.
     const pressGrid = document.getElementById('press-grid');

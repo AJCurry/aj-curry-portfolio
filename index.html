@@ -7,22 +7,43 @@
 <meta name="description" content="AJ Curry — Emmy Award-winning marketing executive with 12 years building social, content, experiential, and influencer strategies for the most iconic brands in sports and entertainment.">
 <meta name="author" content="AJ Curry">
 <meta name="theme-color" content="#081F34">
-<link rel="canonical" href="https://justinrestaino.com/aj-curry-portfolio/">
+<link rel="canonical" href="https://ajcurry.com/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preload" as="image" href="images/hero.jpg" fetchpriority="high">
 
 <!-- Open Graph / social share -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AJ Curry">
 <meta property="og:title" content="AJ Curry — Emmy Award-Winning Marketing Executive">
 <meta property="og:description" content="12 years building social, content, experiential, and influencer strategies for the most iconic brands in sports and entertainment.">
-<meta property="og:url" content="https://justinrestaino.com/aj-curry-portfolio/">
-<meta property="og:image" content="https://justinrestaino.com/aj-curry-portfolio/images/hero.jpg">
+<meta property="og:url" content="https://ajcurry.com/">
+<meta property="og:image" content="https://ajcurry.com/images/og.jpg">
 
 <!-- Twitter card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="AJ Curry — Emmy Award-Winning Marketing Executive">
 <meta name="twitter:description" content="12 years building social, content, experiential, and influencer strategies for the most iconic brands in sports and entertainment.">
-<meta name="twitter:image" content="https://justinrestaino.com/aj-curry-portfolio/images/hero.jpg">
+<meta name="twitter:image" content="https://ajcurry.com/images/og.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "AJ Curry",
+  "url": "https://ajcurry.com/",
+  "image": "https://ajcurry.com/images/og.jpg",
+  "jobTitle": "Marketing Executive",
+  "description": "Emmy Award-winning marketing executive with 12 years building social, content, experiential, and influencer strategies for the most iconic brands in sports and entertainment.",
+  "award": "2019 Emmy Award for Outstanding Trans-Media Sports Coverage",
+  "worksFor": { "@type": "Organization", "name": "Fiume Capital" },
+  "sameAs": [
+    "https://x.com/aj_curry",
+    "https://www.instagram.com/aj_curry",
+    "https://www.tiktok.com/@aj_curry",
+    "https://www.linkedin.com/in/amandajcurry"
+  ]
+}
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -177,6 +198,13 @@
     transition:background .25s,transform .2s;white-space:nowrap;
   }
   .nav-cta:hover{background:var(--ac);transform:translateY(-1px);}
+
+  /* ---- Scroll progress (hairline at the very top edge) ---- */
+  .scroll-progress{
+    position:fixed;top:0;left:0;width:100%;height:2px;z-index:101;
+    background:var(--ac2);transform:scaleX(0);transform-origin:0 50%;
+    will-change:transform;pointer-events:none;
+  }
 
   /* ============================================================
      INTRO REVEAL — a navy panel masks the content load, the serif name
@@ -557,20 +585,35 @@
   }
   .proj-media{text-decoration:none;color:inherit;display:block;}
   .proj-img{
-    position:relative;aspect-ratio:4/3;overflow:hidden;
-    background:linear-gradient(135deg,#EEEFF3,#E4E6EC);
-    border:1px solid var(--line-soft);
-    display:flex;align-items:center;justify-content:center;
+    position:relative;aspect-ratio:4/3;overflow:hidden;display:block;
+    background:radial-gradient(120% 130% at 80% 14%, #0d2c4b 0%, var(--ac3) 72%);
+  }
+  .proj-photo{
+    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+    transition:transform .6s var(--ease);
+  }
+  .proj-media:hover .proj-photo{transform:scale(1.045);}
+  .proj.has-photo .proj-img::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(180deg, rgba(8,31,52,0.34) 0%, rgba(8,31,52,0) 32%, rgba(8,31,52,0) 64%, rgba(8,31,52,0.52) 100%);
+  }
+  .proj-num{
+    position:absolute;right:16px;bottom:2px;z-index:0;
+    font-family:var(--serif);font-size:clamp(76px,8vw,104px);line-height:1;
+    color:rgba(207,255,129,0.15);user-select:none;
   }
   .proj-tag{
+    position:absolute;top:16px;left:18px;z-index:1;
     font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--faint);
+    color:var(--ac2);
   }
   .proj-badge{
-    position:absolute;left:14px;bottom:14px;width:26px;height:26px;border-radius:50%;
-    background:var(--ink);color:#fff;display:flex;align-items:center;
-    justify-content:center;font-size:13px;
+    position:absolute;left:16px;bottom:16px;z-index:1;width:30px;height:30px;border-radius:50%;
+    background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.28);
+    color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;
+    transition:background .25s,color .25s,border-color .25s,transform .25s;
   }
+  .proj-media:hover .proj-badge{background:var(--ac2);border-color:var(--ac2);color:var(--ac3);transform:translateY(-2px);}
   .proj-title{
     font-size:16px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
     margin:20px 0 10px;line-height:1.2;
@@ -727,6 +770,7 @@
     </div>
   </div>
   <div class="grain" aria-hidden="true"></div>
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
 
   <!-- All content is rendered by app.js from data/content.json (editable in
        Pages CMS). These are the mount points it fills. -->
@@ -742,6 +786,6 @@
   </noscript>
 
   <script src="lenis.min.js"></script>
-  <script src="app.js?v=6"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

@@ -280,6 +280,9 @@ content:
                   - name: title
                     label: Project title
                     type: string
+                  - name: image
+                    label: Thumbnail (optional)
+                    type: image
                   - name: roles
                     label: Roles
                     type: string
