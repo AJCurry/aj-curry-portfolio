@@ -519,6 +519,37 @@
     window.__lenis = lenis;
   };
 
+  /* ---- Intro reveal: hold the navy overlay over the content load, then
+     unveil the finished page with a single slide-up. ---- */
+  const introEl = document.getElementById('intro');
+  const removeIntro = () => {
+    if (!introEl || !introEl.parentNode) return;
+    introEl.classList.add('exit');
+    const done = () => { if (introEl.parentNode) introEl.remove(); };
+    introEl.addEventListener('transitionend', (e) => {
+      if (e.target === introEl && e.propertyName === 'transform') done();
+    }, { once: true });
+    setTimeout(done, 1400);
+    if (window.__lenis) window.__lenis.start();
+  };
+  // Absolute safety: never let the overlay trap the page if something stalls.
+  const introSafety = setTimeout(removeIntro, 6000);
+  const revealSite = (data) => {
+    if (!introEl) return;
+    const nameEl = introEl.querySelector('.intro-name');
+    const tagEl = introEl.querySelector('.intro-tag');
+    if (nameEl) nameEl.textContent = (data.hero && data.hero.name) || 'AJ Curry';
+    if (tagEl) tagEl.textContent = (data.hero && data.hero.eyebrow) || '';
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    try { window.scrollTo(0, 0); } catch (e) {}
+    if (window.__lenis) window.__lenis.stop();
+    clearTimeout(introSafety);
+    requestAnimationFrame(() => {
+      introEl.classList.add('ready');
+      setTimeout(removeIntro, reduce ? 200 : 820);
+    });
+  };
+
   /* ============================== BOOT ============================== */
   fetch('data/content.json', { cache: 'no-cache' })
     .then((r) => { if (!r.ok) throw new Error('content.json ' + r.status); return r.json(); })
@@ -529,9 +560,12 @@
         .map((b) => ({ id: b.type, label: b.navLabel || b.title || b.type }));
       initInteractions(navItems);
       initSmoothScroll();
+      revealSite(data);
     })
     .catch((err) => {
       console.error('Failed to load site content:', err);
+      clearTimeout(introSafety);
+      removeIntro();
       const page = document.getElementById('page');
       if (page && !page.children.length) {
         page.appendChild(el('div', {

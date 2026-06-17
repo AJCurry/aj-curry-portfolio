@@ -179,6 +179,44 @@
   .nav-cta:hover{background:var(--ac);transform:translateY(-1px);}
 
   /* ============================================================
+     INTRO REVEAL — a navy panel masks the content load, the serif name
+     rises behind a clip, then the whole panel slides up to unveil the hero.
+     ============================================================ */
+  .intro{
+    position:fixed;inset:0;z-index:1000;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(120% 120% at 50% 36%, #0d2c4b 0%, var(--ac3) 62%);
+    transition:transform 1.05s var(--ease);
+    will-change:transform;
+  }
+  .intro-stage{
+    display:flex;flex-direction:column;align-items:center;gap:20px;
+    padding:0 24px;text-align:center;
+    transition:transform .8s var(--ease),opacity .5s var(--ease);
+  }
+  .intro-rule{
+    width:0;height:1px;background:var(--ac2);
+    transition:width .7s var(--ease) .05s;
+  }
+  .intro-name-mask{display:block;overflow:hidden;}
+  .intro-name{
+    display:block;font-family:var(--serif);font-weight:400;line-height:1.14;
+    font-size:clamp(46px,8vw,104px);letter-spacing:-0.02em;color:#fff;
+    transform:translateY(115%);transition:transform .95s var(--ease);
+  }
+  .intro-tag{
+    font-size:11.5px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
+    color:rgba(255,255,255,0.5);
+    opacity:0;transform:translateY(8px);
+    transition:opacity .7s var(--ease) .14s,transform .7s var(--ease) .14s;
+  }
+  .intro.ready .intro-rule{width:56px;}
+  .intro.ready .intro-name{transform:none;}
+  .intro.ready .intro-tag{opacity:1;transform:none;}
+  .intro.exit{transform:translateY(-100%);}
+  .intro.exit .intro-stage{transform:translateY(-24px);opacity:0;}
+
+  /* ============================================================
      HERO
      ============================================================ */
   .hero{
@@ -224,21 +262,7 @@
   .hero-title{
     font-family:var(--serif);font-weight:400;
     font-size:clamp(60px,9.4vw,150px);line-height:.86;letter-spacing:-0.02em;
-    /* Extend the paint box below the baseline so the clipped gradient covers
-       descenders (J, y); pull layout back up so nothing shifts. */
-    padding-bottom:0.28em;margin-bottom:-0.28em;
-    /* Text is painted by a clipped gradient so a band of green can wipe across
-       it on reveal; at rest it reads as solid ink. */
-    background-image:linear-gradient(100deg,
-      var(--ink) 0%, var(--ink) 42%, var(--ac2) 48%, var(--ac2) 52%, var(--ink) 58%, var(--ink) 100%);
-    background-size:300% 100%;background-position:0% 0;background-repeat:no-repeat;
-    -webkit-background-clip:text;background-clip:text;
-    -webkit-text-fill-color:transparent;color:transparent;
-  }
-  html.js-anim .hero-title.in{animation:heroGreenWipe 1.7s var(--ease) .25s both;}
-  @keyframes heroGreenWipe{
-    from{background-position:0% 0;}
-    to{background-position:100% 0;}
+    color:var(--ink);
   }
   .hero-intro{
     font-size:clamp(16px,1.45vw,20px);line-height:1.55;color:var(--ink-2);
@@ -695,6 +719,13 @@
 </style>
 </head>
 <body>
+  <div class="intro" id="intro" role="presentation">
+    <div class="intro-stage">
+      <span class="intro-rule" aria-hidden="true"></span>
+      <span class="intro-name-mask"><span class="intro-name"></span></span>
+      <span class="intro-tag"></span>
+    </div>
+  </div>
   <div class="grain" aria-hidden="true"></div>
 
   <!-- All content is rendered by app.js from data/content.json (editable in
@@ -711,6 +742,6 @@
   </noscript>
 
   <script src="lenis.min.js"></script>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>
