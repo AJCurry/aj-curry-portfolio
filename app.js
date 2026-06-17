@@ -227,7 +227,7 @@
     return el('section', { class: 'section', id: 'projects' }, [head, rail]);
   };
 
-  const PRESS_VISIBLE = 6;
+  const PRESS_VISIBLE = 8;
   const renderPress = (b, num) => {
     const grid = el('div', { class: 'press-grid reveal card', id: 'press-grid' });
     (b.items || []).forEach((a, i) => {
